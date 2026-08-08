@@ -2,8 +2,12 @@ import { useState } from "react";
 
 import { LoginSchema } from "@validation/authentication/auth.validation";
 import { login } from "@service/authentication/auth.service";
+import { useNavigate } from "react-router-dom";
 
 export function useLogin() {
+
+    const navigate = useNavigate();
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -38,8 +42,9 @@ export function useLogin() {
                 result.data.password
             );
 
-            // TODO:
-            // router.replace("/(tabs)");
+            navigate("/dashboard", {
+                replace: true,
+            });
 
         } catch (error) {
             alert((error as Error).message);
