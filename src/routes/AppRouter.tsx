@@ -7,11 +7,11 @@ export default function AppRouter() {
         <Routes>
             <Route
                 path="/"
-                element={<Navigate to="/login" replace />}
+                element={<Navigate to="/admin-login" replace />}
             />
 
             <Route
-                path="/login"
+                path="/admin-login"
                 element={<Login />}
             />
         </Routes>

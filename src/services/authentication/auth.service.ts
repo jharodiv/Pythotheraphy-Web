@@ -41,6 +41,8 @@ export async function login(email: string, password: string) {
             throw new Error("Only admitrators can access this application");
         }
 
+        console.log("Profile Logged", credential.user);
+
         return credential.user;
     } catch (error) {
         if (error instanceof Error) {
