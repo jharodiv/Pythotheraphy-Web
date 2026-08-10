@@ -66,20 +66,23 @@ export default function DashboardLayout() {
     }
 
     return (
-        <div className="flex min-h-screen bg-[#f4f6f2]">
+        <div className="flex h-screen overflow-hidden bg-[#f4f6f2]">
+            {/* Sidebar stays fixed */}
             <Sidebar
                 activePage={activePage}
                 onNavigate={setActivePage}
                 onLogout={handleLogout}
             />
 
+            {/* Dashboard area */}
             <div className="flex min-w-0 flex-1 flex-col">
                 <Header
                     title={header.title}
                     description={header.description}
                 />
 
-                <main className="flex-1 overflow-y-auto p-8">
+                {/* Only this area scrolls */}
+                <main className="min-h-0 flex-1 overflow-y-auto p-8">
                     {renderPage()}
                 </main>
             </div>

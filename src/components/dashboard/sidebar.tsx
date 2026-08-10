@@ -1,5 +1,4 @@
 import {
-    ChartNoAxesColumn,
     FolderTree,
     LayoutDashboard,
     Leaf,
@@ -77,11 +76,10 @@ export default function Sidebar({
                             key={item.key}
                             type="button"
                             onClick={() => onNavigate(item.key)}
-                            className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
-                                active
+                            className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${active
                                     ? "bg-[#edf2ea] text-[#486344]"
                                     : "text-[#687167] hover:bg-[#f6f8f5] hover:text-[#3f4d3d]"
-                            }`}
+                                }`}
                         >
                             <Icon className="h-5 w-5" />
 
