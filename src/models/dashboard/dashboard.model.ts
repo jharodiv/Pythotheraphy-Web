@@ -5,9 +5,7 @@ export type DashboardStats = {
     totalPlants: number;
     verifiedPlants: number;
     unverifiedPlants: number;
-    totalUsers: number;
 }
-
 // For admin logging
 export type AdminLog = {
     id: string;

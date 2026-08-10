@@ -1,4 +1,19 @@
-export default function PlantVerification() {
+interface PlantVerificationProps {
+    verified: number;
+    unverified: number;
+}
+
+export default function PlantVerification({
+    verified,
+    unverified
+}: PlantVerificationProps) {
+
+    const total = verified + unverified;
+    const percentage =
+        total === 0
+            ? 0
+            : Math.round((verified / total) * 100);
+            
     return (
         <div className="rounded-xl border border-[#e1e5de] bg-white p-6 shadow-sm">
             <div>
@@ -17,7 +32,7 @@ export default function PlantVerification() {
 
                     <div className="text-center">
                         <p className="text-3xl font-semibold text-[#263126]">
-                            72%
+                            {percentage}%
                         </p>
 
                         <p className="text-xs text-[#8a9288]">

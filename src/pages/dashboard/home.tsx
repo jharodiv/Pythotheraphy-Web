@@ -33,21 +33,21 @@ export default function Home() {
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                 <StatCard
                     title="Total Plants"
-                    value="124"
+                    value={stats.totalPlants.toLocaleString()}
                     description="Plants in database"
                     icon={Leaf}
                 />
 
                 <StatCard
                     title="Verified Plants"
-                    value="89"
+                    value={stats.verifiedPlants.toLocaleString()}
                     description="Verified by admin"
                     icon={ShieldCheck}
                 />
 
                 <StatCard
                     title="Unverified Plants"
-                    value="35"
+                    value={stats.unverifiedPlants.toLocaleString()}
                     description="Awaiting verification"
                     icon={CheckCircle2}
                 />
@@ -62,7 +62,9 @@ export default function Home() {
 
             {/* Charts */}
             <div className="grid gap-6 lg:grid-cols-2">
-                <PlantVerification />
+                <PlantVerification
+                    verified={stats.verifiedPlants}
+                    unverified={stats.unverifiedPlants} />
                 <UserGrowth />
             </div>
 

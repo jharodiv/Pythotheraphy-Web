@@ -9,21 +9,18 @@ import {
 import type { DashboardStats } from "@model/dashboard/dashboard.model";
 
 const PLANTS_COLLECTION = "plants";
-const USERS_COLLECTION = "users";
 
-// GET THE COUNT OF THE TOTAL PLANTS, VERIFIED PLANTS, UNVERIFIED PLANTS, AND TOTAL USERS. USING THE FIRESTORE 
+// GET THE COUNT OF THE TOTAL PLANTS, VERIFIED PLANTS,
+// UNVERIFIED PLANTS, AND TOTAL USERS USING FIRESTORE
 
 export async function getDashboardStats(): Promise<DashboardStats> {
-
     try {
         const plantsRef = collection(db, PLANTS_COLLECTION);
-        const userRef = collection(db, USERS_COLLECTION);
 
         const [
             totalPlantsSnapshot,
             verifiedPlantsSnapshot,
             unverifiedPlantsSnapshot,
-            totalUsersSnapshot,
         ] = await Promise.all([
             getCountFromServer(plantsRef),
 
@@ -40,8 +37,6 @@ export async function getDashboardStats(): Promise<DashboardStats> {
                     where("verified", "==", false)
                 )
             ),
-
-            getCountFromServer(userRef),
         ]);
 
         return {
@@ -50,18 +45,20 @@ export async function getDashboardStats(): Promise<DashboardStats> {
                 verifiedPlantsSnapshot.data().count,
             unverifiedPlants:
                 unverifiedPlantsSnapshot.data().count,
-            totalUsers: totalUsersSnapshot.data().count,
         };
-
-
     } catch (error) {
         console.error(
-            "Failed to fetch dashboard statistic",
+            "Failed to fetch dashboard statistics:",
             error
         );
 
         throw new Error(
-            "Unable to load statistic"
-        )
+            "Unable to load dashboard statistics."
+        );
     }
 }
+
+
+// Will create another service for the count of the users per month:
+
+// Will create another serrvice for the admin recent activities:
