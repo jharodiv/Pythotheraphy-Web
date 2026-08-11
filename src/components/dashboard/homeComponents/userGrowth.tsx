@@ -1,16 +1,40 @@
-const userGrowth = [35, 52, 45, 68, 60, 82, 95];
+import { useEffect, useState } from "react";
+import {
+    CartesianGrid,
+    Line,
+    LineChart,
+    ResponsiveContainer,
+    Tooltip,
+    XAxis,
+    YAxis,
+} from "recharts";
 
-const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-];
+import { getUserPerMonth } from "@service/dashboard/dashboardHome.service";
+import type { UserMonthlyCount } from "@model/dashboard/dashboard.model";
 
 export default function UserGrowth() {
+    const [userGrowth, setUserGrowth] = useState<UserMonthlyCount[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function loadUserGrowth() {
+            try {
+                const data = await getUserPerMonth();
+
+                setUserGrowth(data);
+            } catch (error) {
+                console.error(
+                    "Failed to load user growth:",
+                    error
+                );
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        loadUserGrowth();
+    }, []);
+
     return (
         <div className="rounded-xl border border-[#e1e5de] bg-white p-6 shadow-sm">
             <div>
@@ -23,26 +47,82 @@ export default function UserGrowth() {
                 </p>
             </div>
 
-            <div className="mt-8 flex h-48 items-end gap-4 border-b border-l border-[#e8ebe5] px-4 pb-0">
-                {userGrowth.map((height, index) => (
-                    <div
-                        key={index}
-                        className="flex flex-1 items-end justify-center"
-                    >
-                        <div
-                            className="w-full max-w-10 rounded-t-md bg-[#9caf94] transition hover:bg-[#486344]"
-                            style={{
-                                height: `${height}%`,
-                            }}
-                        />
+            <div className="mt-6 h-64">
+                {loading ? (
+                    <div className="flex h-full items-center justify-center text-sm text-[#929a91]">
+                        Loading...
                     </div>
-                ))}
-            </div>
+                ) : (
+                    <ResponsiveContainer
+                        width="100%"
+                        height="100%"
+                    >
+                        <LineChart
+                            data={userGrowth}
+                            margin={{
+                                top: 10,
+                                right: 10,
+                                left: 0,
+                                bottom: 0,
+                            }}
+                        >
+                            <CartesianGrid
+                                strokeDasharray="3 3"
+                                vertical={false}
+                            />
 
-            <div className="mt-3 flex justify-between px-4 text-xs text-[#929a91]">
-                {months.map((month) => (
-                    <span key={month}>{month}</span>
-                ))}
+                            <XAxis
+                                dataKey="month"
+                                axisLine={false}
+                                tickLine={false}
+                                tick={{
+                                    fontSize: 12,
+                                }}
+                            />
+
+                            <YAxis
+                                allowDecimals={false}
+                                axisLine={false}
+                                tickLine={false}
+                                width={35}
+                                tick={{
+                                    fontSize: 12,
+                                }}
+                            />
+
+                            <Tooltip
+                                contentStyle={{
+                                    borderRadius: "8px",
+                                    border: "1px solid #e1e5de",
+                                    boxShadow:
+                                        "0 2px 8px rgba(0, 0, 0, 0.08)",
+                                }}
+                                labelStyle={{
+                                    fontWeight: 600,
+                                }}
+                                formatter={(value) => [
+                                    value,
+                                    "Users",
+                                ]}
+                            />
+
+                            <Line
+                                type="monotone"
+                                dataKey="count"
+                                stroke="#486344"
+                                strokeWidth={3}
+                                dot={{
+                                    r: 4,
+                                    strokeWidth: 2,
+                                    fill: "#ffffff",
+                                }}
+                                activeDot={{
+                                    r: 6,
+                                }}
+                            />
+                        </LineChart>
+                    </ResponsiveContainer>
+                )}
             </div>
         </div>
     );

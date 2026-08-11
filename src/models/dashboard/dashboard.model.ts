@@ -5,6 +5,7 @@ export type DashboardStats = {
     totalPlants: number;
     verifiedPlants: number;
     unverifiedPlants: number;
+    totalUsers: number;
 }
 // For admin logging
 export type AdminLog = {
@@ -16,3 +17,9 @@ export type AdminLog = {
     description: string;
     timestamp: Timestamp;
 };
+
+// User Model to count how many users registered per month
+export interface UserMonthlyCount {
+    month: string;
+    count: number
+}

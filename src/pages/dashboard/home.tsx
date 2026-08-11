@@ -54,7 +54,7 @@ export default function Home() {
 
                 <StatCard
                     title="Total Users"
-                    value="1,248"
+                    value={stats.totalUsers.toLocaleString()}
                     description="Registered users"
                     icon={Users}
                 />
