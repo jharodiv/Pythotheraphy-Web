@@ -11,6 +11,7 @@ import type { DashboardStats, UserMonthlyCount } from "@model/dashboard/dashboar
 
 const PLANTS_COLLECTION = "plants";
 const USERS_COLLECTION = "users";
+const PLANT_CACHE_COLLECTION = "plant_cache"
 
 // GET THE COUNT OF THE TOTAL PLANTS, VERIFIED PLANTS,
 // UNVERIFIED PLANTS, AND TOTAL USERS USING FIRESTORE
@@ -19,6 +20,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     try {
         const plantsRef = collection(db, PLANTS_COLLECTION);
         const usersRef = collection(db, USERS_COLLECTION);
+        const plantCacheRef = collection(db, PLANT_CACHE_COLLECTION);
 
         const [
             totalPlantsSnapshot,
@@ -26,22 +28,16 @@ export async function getDashboardStats(): Promise<DashboardStats> {
             unverifiedPlantsSnapshot,
             totalUsersSnapshot,
         ] = await Promise.all([
+            // Total plants (all documents in the 'plants' collection)
             getCountFromServer(plantsRef),
 
-            getCountFromServer(
-                query(
-                    plantsRef,
-                    where("verified", "==", true)
-                )
-            ),
+            // Verified plants
+            getCountFromServer(plantsRef),
 
-            getCountFromServer(
-                query(
-                    plantsRef,
-                    where("verified", "==", false)
-                )
-            ),
+            // Unverified plants
+            getCountFromServer(plantCacheRef),
 
+            // Total users
             getCountFromServer(usersRef),
         ]);
 
