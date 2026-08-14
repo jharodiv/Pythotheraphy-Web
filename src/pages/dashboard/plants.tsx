@@ -1,11 +1,20 @@
 import { Leaf, Search, SlidersHorizontal } from "lucide-react";
 import { useState } from "react";
 
+import { usePlants } from "@hooks/dashboard/plants/usePlants";
+
 export default function Plants() {
     const [filterOpen, setFilterOpen] = useState(false);
-    const [filter, setFilter] = useState<"all" | "verified" | "unverified">(
-        "all"
-    );
+
+    const {
+        filteredPlants,
+        search,
+        filter,
+        setSearch,
+        setFilter,
+        loading,
+        error,
+    } = usePlants();
 
     const filterLabel = {
         all: "All Plants",
@@ -15,6 +24,7 @@ export default function Plants() {
 
     return (
         <div className="space-y-6">
+            {/* Header */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h3 className="text-lg font-semibold text-[#263126]">
@@ -31,7 +41,9 @@ export default function Plants() {
                 </button>
             </div>
 
+            {/* Plants Card */}
             <div className="rounded-xl border border-[#e1e5de] bg-white shadow-sm">
+                {/* Search and Filter */}
                 <div className="border-b border-[#e8ebe5] p-4">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                         {/* Search */}
@@ -40,6 +52,10 @@ export default function Plants() {
 
                             <input
                                 type="text"
+                                value={search}
+                                onChange={(event) =>
+                                    setSearch(event.target.value)
+                                }
                                 placeholder="Search plants..."
                                 className="w-full rounded-lg border border-[#dfe4dc] py-2.5 pl-9 pr-3 text-sm text-black outline-none focus:border-[#aab8a5] focus:ring-2 focus:ring-[#edf2ea]"
                             />
@@ -48,7 +64,9 @@ export default function Plants() {
                         {/* Filter */}
                         <div className="relative">
                             <button
-                                onClick={() => setFilterOpen(!filterOpen)}
+                                onClick={() =>
+                                    setFilterOpen(!filterOpen)
+                                }
                                 className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#dfe4dc] bg-white px-4 py-2.5 text-sm font-medium text-[#596257] transition hover:bg-[#f7f9f5] sm:w-auto"
                             >
                                 <SlidersHorizontal className="h-4 w-4" />
@@ -58,40 +76,43 @@ export default function Plants() {
 
                             {filterOpen && (
                                 <div className="absolute right-0 z-10 mt-2 w-40 overflow-hidden rounded-lg border border-[#e1e5de] bg-white shadow-lg">
+                                    {/* All */}
                                     <button
                                         onClick={() => {
                                             setFilter("all");
                                             setFilterOpen(false);
                                         }}
                                         className={`w-full px-4 py-2.5 text-left text-sm transition hover:bg-[#f7f9f5] ${filter === "all"
-                                                ? "bg-[#f1f5ef] font-medium text-[#486344]"
-                                                : "text-[#596257]"
+                                            ? "bg-[#f1f5ef] font-medium text-[#486344]"
+                                            : "text-[#596257]"
                                             }`}
                                     >
                                         All Plants
                                     </button>
 
+                                    {/* Verified */}
                                     <button
                                         onClick={() => {
                                             setFilter("verified");
                                             setFilterOpen(false);
                                         }}
                                         className={`w-full px-4 py-2.5 text-left text-sm transition hover:bg-[#f7f9f5] ${filter === "verified"
-                                                ? "bg-[#f1f5ef] font-medium text-[#486344]"
-                                                : "text-[#596257]"
+                                            ? "bg-[#f1f5ef] font-medium text-[#486344]"
+                                            : "text-[#596257]"
                                             }`}
                                     >
                                         Verified
                                     </button>
 
+                                    {/* Unverified */}
                                     <button
                                         onClick={() => {
                                             setFilter("unverified");
                                             setFilterOpen(false);
                                         }}
                                         className={`w-full px-4 py-2.5 text-left text-sm transition hover:bg-[#f7f9f5] ${filter === "unverified"
-                                                ? "bg-[#f1f5ef] font-medium text-[#486344]"
-                                                : "text-[#596257]"
+                                            ? "bg-[#f1f5ef] font-medium text-[#486344]"
+                                            : "text-[#596257]"
                                             }`}
                                     >
                                         Unverified
@@ -102,17 +123,83 @@ export default function Plants() {
                     </div>
                 </div>
 
-                <div className="flex min-h-64 flex-col items-center justify-center text-center">
-                    <Leaf className="h-10 w-10 text-[#b3c0ae]" />
+                {/* Loading */}
+                {loading && (
+                    <div className="flex min-h-64 items-center justify-center">
+                        <p className="text-sm text-[#7b847a]">
+                            Loading plants...
+                        </p>
+                    </div>
+                )}
 
-                    <p className="mt-3 text-sm font-medium text-[#596257]">
-                        No plants to display
-                    </p>
+                {/* Error */}
+                {!loading && error && (
+                    <div className="flex min-h-64 items-center justify-center text-center">
+                        <div>
+                            <p className="text-sm font-medium text-red-600">
+                                Failed to load plants
+                            </p>
 
-                    <p className="mt-1 text-xs text-[#929a91]">
-                        Plant data will be connected later.
-                    </p>
-                </div>
+                            <p className="mt-1 text-xs text-[#929a91]">
+                                {error}
+                            </p>
+                        </div>
+                    </div>
+                )}
+
+                {/* Empty State */}
+                {!loading &&
+                    !error &&
+                    filteredPlants.length === 0 && (
+                        <div className="flex min-h-64 flex-col items-center justify-center text-center">
+                            <Leaf className="h-10 w-10 text-[#b3c0ae]" />
+
+                            <p className="mt-3 text-sm font-medium text-[#596257]">
+                                No plants to display
+                            </p>
+
+                            <p className="mt-1 text-xs text-[#929a91]">
+                                {search
+                                    ? "Try adjusting your search."
+                                    : "Plant data will be connected later."}
+                            </p>
+                        </div>
+                    )}
+
+                {/* Plant List */}
+                {!loading &&
+                    !error &&
+                    filteredPlants.length > 0 && (
+                        <div className="divide-y divide-[#e8ebe5]">
+                            {filteredPlants.map((plant) => (
+                                <div
+                                    key={plant.id}
+                                    className="flex items-center justify-between p-4 transition hover:bg-[#fafbf9]"
+                                >
+                                    <div>
+                                        <p className="text-sm font-medium text-[#263126]">
+                                            {plant.commonName}
+                                        </p>
+
+                                        <p className="mt-1 text-xs italic text-[#7b847a]">
+                                            {plant.scientificName}
+                                        </p>
+                                    </div>
+
+                                    <span
+                                        className={`rounded-full px-3 py-1 text-xs font-medium ${plant.verified
+                                            ? "bg-[#edf4eb] text-[#486344]"
+                                            : "bg-[#f3f3f0] text-[#7b847a]"
+                                            }`}
+                                    >
+                                        {plant.verified
+                                            ? "Verified"
+                                            : "Unverified"}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    )}
             </div>
         </div>
     );
