@@ -1,4 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+    useCallback,
+    useEffect,
+    useMemo,
+    useState,
+} from "react";
 
 import {
     addPlant,
@@ -11,12 +16,11 @@ import {
 import type { PlantModel } from "@model/dashboard/plants.model";
 
 import type {
+    PlantFilter,
     UsePlantsReturn,
-    PlantFilter
 } from "@type/dashboard/plant.types";
 
 export function usePlants(): UsePlantsReturn {
-
     const [plants, setPlants] = useState<PlantModel[]>([]);
 
     const [search, setSearch] = useState("");
@@ -30,8 +34,8 @@ export function usePlants(): UsePlantsReturn {
     const [error, setError] =
         useState<string | null>(null);
 
-
     // UI State
+
     const [activePlant, setActivePlant] =
         useState<string | null>(null);
 
@@ -41,16 +45,26 @@ export function usePlants(): UsePlantsReturn {
     const [editForm, setEditForm] =
         useState<PlantModel | null>(null);
 
-    const [editModalOpen, setEditModalOpen] = useState(false);
+    const [editModalOpen, setEditModalOpen] =
+        useState(false);
 
-    const [editingFields, setEditingFields] = useState<Set<keyof PlantModel>>(new Set());
+    // Fields currently being edited
+    const [editingFields, setEditingFields] =
+        useState<Set<keyof PlantModel>>(new Set());
 
-    const [saving, setSaving] = useState(false);
+    // Fields that contain unsaved changes
+    const [changedFields, setChangedFields] =
+        useState<Set<keyof PlantModel>>(new Set());
 
+    // Original plant before editing
+    const [originalPlant, setOriginalPlant] =
+        useState<PlantModel | null>(null);
 
-    /**
-     * Fetch all plants.
-     */
+    const [saving, setSaving] =
+        useState(false);
+
+    // Fetch Plants
+
     const fetchPlants = useCallback(async () => {
         try {
             setLoading(true);
@@ -75,9 +89,8 @@ export function usePlants(): UsePlantsReturn {
         }
     }, []);
 
-    /**
-     * Filter plants based on search and verification status.
-     */
+    // Filter Plants
+
     const filteredPlants = useMemo(() => {
         const searchTerm = search
             .toLowerCase()
@@ -107,9 +120,8 @@ export function usePlants(): UsePlantsReturn {
         });
     }, [plants, search, filter]);
 
-    /**
-     * Fetch a single plant.
-     */
+    // Fetch Single Plant
+
     const fetchPlantById = useCallback(
         async (id: string) => {
             try {
@@ -134,9 +146,8 @@ export function usePlants(): UsePlantsReturn {
         []
     );
 
-    /**
-     * Create a plant.
-     */
+    // Create Plant
+
     const createPlant = useCallback(
         async (
             plant: Omit<PlantModel, "id">
@@ -171,9 +182,8 @@ export function usePlants(): UsePlantsReturn {
         []
     );
 
-    /**
-     * Update a plant.
-     */
+    // Update Plant
+
     const editPlant = useCallback(
         async (
             id: string,
@@ -212,9 +222,8 @@ export function usePlants(): UsePlantsReturn {
         []
     );
 
-    /**
-     * Delete a plant.
-     */
+    // Delete Plant
+
     const removePlant = useCallback(
         async (id: string) => {
             try {
@@ -246,19 +255,203 @@ export function usePlants(): UsePlantsReturn {
         []
     );
 
-    // Saving the Plant
+    // Open Edit Modal
 
-    const saveEdit = useCallback(async () => {
+    const openEditModal = useCallback(
+        (plant: PlantModel) => {
+            const clonedPlant: PlantModel = {
+                ...plant,
 
-        if (!editForm || !selectedPlant) {
+                medicinalProperties:
+                    Array.isArray(
+                        plant.medicinalProperties
+                    )
+                        ? [
+                            ...plant.medicinalProperties,
+                        ]
+                        : [],
+
+                categories:
+                    Array.isArray(
+                        plant.categories
+                    )
+                        ? [...plant.categories]
+                        : [],
+            };
+
+            // Keep a copy of the original data
+            // so fields can be reverted later.
+            setOriginalPlant(clonedPlant);
+
+            // Create the editable form
+            setEditForm({
+                ...clonedPlant,
+
+                medicinalProperties: [
+                    ...clonedPlant.medicinalProperties,
+                ],
+
+                categories: [
+                    ...clonedPlant.categories,
+                ],
+            });
+
+            // Reset field states
+            setEditingFields(new Set());
+            setChangedFields(new Set());
+
+            setSelectedPlant(clonedPlant);
+
+            setEditModalOpen(true);
+        },
+        []
+    );
+
+    // Close Edit Modal
+
+    const closeEditModal = useCallback(() => {
+        if (saving) {
             return;
         }
 
+        setEditModalOpen(false);
+
+        setSelectedPlant(null);
+
+        setEditForm(null);
+
+        setOriginalPlant(null);
+
+        setEditingFields(new Set());
+
+        setChangedFields(new Set());
+    }, [saving]);
+
+    // Enable Field Editing
+
+    const enableFieldEdit = useCallback(
+        (field: keyof PlantModel) => {
+            setEditingFields((current) => {
+                const next = new Set(current);
+
+                next.add(field);
+
+                return next;
+            });
+        },
+        []
+    );
+
+    // Update Edit Field
+
+    const updateEditField = useCallback(
+        <K extends keyof PlantModel>(
+            field: K,
+            value: PlantModel[K]
+        ) => {
+            // Update form
+            setEditForm((current) => {
+                if (!current) {
+                    return current;
+                }
+
+                return {
+                    ...current,
+                    [field]: value,
+                };
+            });
+
+            if (!originalPlant) {
+                return;
+            }
+
+            // Check whether the field actually changed
+            setChangedFields((current) => {
+                const next = new Set(current);
+
+                const originalValue =
+                    originalPlant[field];
+
+                const hasChanged =
+                    JSON.stringify(
+                        originalValue
+                    ) !==
+                    JSON.stringify(value);
+
+                if (hasChanged) {
+                    next.add(field);
+                } else {
+                    next.delete(field);
+                }
+
+                return next;
+            });
+        },
+        [originalPlant]
+    );
+
+    // Save Individual Field Edit
+
+    const saveEditField = useCallback(
+        (field: keyof PlantModel) => {
+            // The field is no longer being edited.
+            //
+            // IMPORTANT:
+            // This does NOT save to Firestore.
+            // It only finishes editing this field.
+            setEditingFields((current) => {
+                const next = new Set(current);
+
+                next.delete(field);
+
+                return next;
+            });
+        },
+        []
+    );
+
+    // Clear Individual Field Edit
+
+    const clearFieldEdit = useCallback(
+        (field: keyof PlantModel) => {
+            if (!originalPlant) {
+                return;
+            }
+
+            // Restore the original value
+            setEditForm((current) => {
+                if (!current) {
+                    return current;
+                }
+
+                return {
+                    ...current,
+                    [field]: originalPlant[field],
+                };
+            });
+
+            // Remove the field from changed fields
+            setChangedFields((current) => {
+                const next = new Set(current);
+
+                next.delete(field);
+
+                return next;
+            });
+        },
+        [originalPlant]
+    );
+
+    // Save All Plant Changes
+
+    const saveEdit = useCallback(async () => {
+        if (!editForm) {
+            return;
+        }
 
         try {
             setSaving(true);
-
-
+            setError(null);
 
             const {
                 id,
@@ -267,6 +460,7 @@ export function usePlants(): UsePlantsReturn {
 
             await updatePlant(id, plantData);
 
+            // Update local list
             setPlants((current) =>
                 current.map((plant) =>
                     plant.id === id
@@ -278,100 +472,38 @@ export function usePlants(): UsePlantsReturn {
                 )
             );
 
+            // Close modal
             setEditModalOpen(false);
+
             setSelectedPlant(null);
+
             setEditForm(null);
+
+            setOriginalPlant(null);
+
             setEditingFields(new Set());
+
+            setChangedFields(new Set());
         } catch (error) {
             console.error(
-                "Failed to save Plants",
+                "Failed to save plant:",
                 error
-            )
+            );
 
             setError(
                 error instanceof Error
                     ? error.message
-                    : "Unable to update plant"
-            )
+                    : "Unable to update plant."
+            );
 
-            throw error
+            throw error;
         } finally {
             setSaving(false);
         }
+    }, [editForm]);
 
-    }, [editForm, selectedPlant]);
+    // Fetch on Mount
 
-    // Opening Edit Modal
-    const openEditModal = useCallback((plant: PlantModel) => {
-        setEditForm({
-            ...plant,
-
-            medicinalProperties: Array.isArray(
-                plant.medicinalProperties
-            )
-                ? [...plant.medicinalProperties]
-                : [],
-
-            categories: Array.isArray(plant.categories)
-                ? [...plant.categories]
-                : [],
-        });
-
-        setEditingFields(new Set());
-        setEditModalOpen(true);
-    }, []);
-
-    // Closing Edit Modal
-
-    const closeEditModal = useCallback(() => {
-        if (saving) return;
-
-        setEditModalOpen(false);
-        setSelectedPlant(null);
-        setEditForm(null);
-        setEditingFields(new Set());
-    }, [saving]);
-
-    //Enabling Field Edits
-
-    const enableFieldEdit = useCallback(
-        (field: keyof PlantModel) => {
-            setEditingFields((current) => {
-                const updated = new Set(current);
-
-                updated.add(field);
-
-                return updated;
-            });
-        }, []
-    );
-
-    // Updating Edit Fields:
-
-    const updateEditField = useCallback(
-        <K extends keyof PlantModel>(
-            field: K,
-            value: PlantModel[K]
-        ) => {
-            setEditForm((current) => {
-                if (!current) {
-                    return current;
-                }
-
-                return {
-                    ...current,
-                    [field]: value,
-                };
-            });
-        },
-        []
-    );
-
-
-
-    /**
-     * Fetch plants when the hook mounts.
-     */
     useEffect(() => {
         fetchPlants();
     }, [fetchPlants]);
@@ -396,7 +528,7 @@ export function usePlants(): UsePlantsReturn {
         editPlant,
         removePlant,
 
-        // Plant row UI state
+        // Row UI
         activePlant,
         setActivePlant,
 
@@ -406,12 +538,20 @@ export function usePlants(): UsePlantsReturn {
         editModalOpen,
         saving,
 
-        // Edit modal actions
         openEditModal,
         closeEditModal,
+
+        // Field editing
         editingFields,
+        changedFields,
+
         enableFieldEdit,
         updateEditField,
+
+        saveEditField,
+        clearFieldEdit,
+
+        // Save entire plant
         saveEdit,
     };
 }
