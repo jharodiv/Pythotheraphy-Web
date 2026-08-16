@@ -2,11 +2,14 @@ import {
     Check,
     Leaf,
     Pencil,
+    RotateCcw,
     Search,
     SlidersHorizontal,
     Trash2,
     X,
 } from "lucide-react";
+
+import type { EditableTextareaProps, EditableInputProps, EditPlantModalProps } from "@type/dashboard/plant.types";
 
 import { useState } from "react";
 
@@ -128,11 +131,10 @@ export default function Plants() {
                                             setFilter("all");
                                             setFilterOpen(false);
                                         }}
-                                        className={`w-full cursor-pointer px-4 py-2.5 text-left text-sm transition hover:bg-[#f7f9f5] ${
-                                            filter === "all"
-                                                ? "bg-[#f1f5ef] font-medium text-[#486344]"
-                                                : "text-[#596257]"
-                                        }`}
+                                        className={`w-full cursor-pointer px-4 py-2.5 text-left text-sm transition hover:bg-[#f7f9f5] ${filter === "all"
+                                            ? "bg-[#f1f5ef] font-medium text-[#486344]"
+                                            : "text-[#596257]"
+                                            }`}
                                     >
                                         All Plants
                                     </button>
@@ -145,11 +147,10 @@ export default function Plants() {
                                             setFilter("verified");
                                             setFilterOpen(false);
                                         }}
-                                        className={`w-full cursor-pointer px-4 py-2.5 text-left text-sm transition hover:bg-[#f7f9f5] ${
-                                            filter === "verified"
-                                                ? "bg-[#f1f5ef] font-medium text-[#486344]"
-                                                : "text-[#596257]"
-                                        }`}
+                                        className={`w-full cursor-pointer px-4 py-2.5 text-left text-sm transition hover:bg-[#f7f9f5] ${filter === "verified"
+                                            ? "bg-[#f1f5ef] font-medium text-[#486344]"
+                                            : "text-[#596257]"
+                                            }`}
                                     >
                                         Verified
                                     </button>
@@ -162,11 +163,10 @@ export default function Plants() {
                                             setFilter("unverified");
                                             setFilterOpen(false);
                                         }}
-                                        className={`w-full cursor-pointer px-4 py-2.5 text-left text-sm transition hover:bg-[#f7f9f5] ${
-                                            filter === "unverified"
-                                                ? "bg-[#f1f5ef] font-medium text-[#486344]"
-                                                : "text-[#596257]"
-                                        }`}
+                                        className={`w-full cursor-pointer px-4 py-2.5 text-left text-sm transition hover:bg-[#f7f9f5] ${filter === "unverified"
+                                            ? "bg-[#f1f5ef] font-medium text-[#486344]"
+                                            : "text-[#596257]"
+                                            }`}
                                     >
                                         Unverified
                                     </button>
@@ -309,11 +309,10 @@ export default function Plants() {
                                                     );
                                                 }
                                             }}
-                                            className={`relative flex cursor-pointer items-center justify-between bg-white p-4 transition-transform duration-300 ease-in-out hover:bg-[#fafbf9] ${
-                                                isActive
-                                                    ? "-translate-x-40"
-                                                    : "translate-x-0"
-                                            }`}
+                                            className={`relative flex cursor-pointer items-center justify-between bg-white p-4 transition-transform duration-300 ease-in-out hover:bg-[#fafbf9] ${isActive
+                                                ? "-translate-x-40"
+                                                : "translate-x-0"
+                                                }`}
                                         >
                                             <div className="min-w-0 flex-1">
                                                 <p className="text-sm font-medium text-[#263126]">
@@ -326,11 +325,10 @@ export default function Plants() {
                                             </div>
 
                                             <span
-                                                className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${
-                                                    plant.verified
-                                                        ? "bg-[#edf4eb] text-[#486344]"
-                                                        : "bg-[#f3f3f0] text-[#7b847a]"
-                                                }`}
+                                                className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${plant.verified
+                                                    ? "bg-[#edf4eb] text-[#486344]"
+                                                    : "bg-[#f3f3f0] text-[#7b847a]"
+                                                    }`}
                                             >
                                                 {plant.verified
                                                     ? "Verified"
@@ -366,25 +364,6 @@ export default function Plants() {
 /* ========================================================================== */
 /* Edit Plant Modal                                                           */
 /* ========================================================================== */
-
-interface EditPlantModalProps {
-    plant: PlantModel;
-    editingFields: Set<keyof PlantModel>;
-    saving: boolean;
-
-    onClose: () => void;
-
-    onEditField: (
-        field: keyof PlantModel
-    ) => void;
-
-    onChangeField: <K extends keyof PlantModel>(
-        field: K,
-        value: PlantModel[K]
-    ) => void;
-
-    onSave: () => Promise<void>;
-}
 
 function EditPlantModal({
     plant,
@@ -591,8 +570,8 @@ function EditPlantModal({
                                 plant.medicinalProperties
                             )
                                 ? plant.medicinalProperties.join(
-                                      ", "
-                                  )
+                                    ", "
+                                )
                                 : ""}
                             editing={isEditing(
                                 "medicinalProperties"
@@ -684,11 +663,10 @@ function EditPlantModal({
 
                             <div className="flex items-center justify-between rounded-lg border border-[#dfe4dc] bg-[#fafbf9] px-4 py-3">
                                 <span
-                                    className={`rounded-full px-3 py-1 text-xs font-medium ${
-                                        plant.verified
-                                            ? "bg-[#edf4eb] text-[#486344]"
-                                            : "bg-[#f3f3f0] text-[#7b847a]"
-                                    }`}
+                                    className={`rounded-full px-3 py-1 text-xs font-medium ${plant.verified
+                                        ? "bg-[#edf4eb] text-[#486344]"
+                                        : "bg-[#f3f3f0] text-[#7b847a]"
+                                        }`}
                                 >
                                     {plant.verified
                                         ? "Verified"
@@ -764,14 +742,6 @@ function EditPlantModal({
 /* Editable Input                                                             */
 /* ========================================================================== */
 
-interface EditableInputProps {
-    label: string;
-    value: string;
-    editing: boolean;
-    onEdit: () => void;
-    onChange: (value: string) => void;
-}
-
 function EditableInput({
     label,
     value,
@@ -826,11 +796,10 @@ function EditableInput({
                 onChange={(event) =>
                     onChange(event.target.value)
                 }
-                className={`w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition ${
-                    editing
-                        ? "border-[#aab8a5] bg-white text-[#263126] focus:ring-2 focus:ring-[#edf2ea]"
-                        : "cursor-default border-[#e1e5de] bg-[#f7f9f5] text-[#596257]"
-                }`}
+                className={`w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition ${editing
+                    ? "border-[#aab8a5] bg-white text-[#263126] focus:ring-2 focus:ring-[#edf2ea]"
+                    : "cursor-default border-[#e1e5de] bg-[#f7f9f5] text-[#596257]"
+                    }`}
             />
         </div>
     );
@@ -839,15 +808,6 @@ function EditableInput({
 /* ========================================================================== */
 /* Editable Textarea                                                          */
 /* ========================================================================== */
-
-interface EditableTextareaProps {
-    label: string;
-    value: string;
-    editing: boolean;
-    onEdit: () => void;
-    onChange: (value: string) => void;
-    placeholder?: string;
-}
 
 function EditableTextarea({
     label,
@@ -905,11 +865,10 @@ function EditableTextarea({
                 }
                 placeholder={placeholder}
                 rows={4}
-                className={`w-full resize-none rounded-lg border px-3 py-2.5 text-sm outline-none transition ${
-                    editing
-                        ? "border-[#aab8a5] bg-white text-[#263126] focus:ring-2 focus:ring-[#edf2ea]"
-                        : "cursor-default border-[#e1e5de] bg-[#f7f9f5] text-[#596257]"
-                }`}
+                className={`w-full resize-none rounded-lg border px-3 py-2.5 text-sm outline-none transition ${editing
+                    ? "border-[#aab8a5] bg-white text-[#263126] focus:ring-2 focus:ring-[#edf2ea]"
+                    : "cursor-default border-[#e1e5de] bg-[#f7f9f5] text-[#596257]"
+                    }`}
             />
         </div>
     );
