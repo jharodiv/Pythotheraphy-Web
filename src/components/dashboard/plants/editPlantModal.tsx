@@ -5,20 +5,29 @@ import type { PlantModel } from "@model/dashboard/plants.model";
 import EditableInput from "@components/dashboard/plants/editableTextInput";
 import EditableTextarea from "@components/dashboard/plants/editableTextArea";
 
-import type { EditPlantModalProps } from "@type/dashboard/plant.types";
+import type {
+    EditPlantModalProps,
+} from "@type/dashboard/plant.types";
 
 export default function EditPlantModal({
     plant,
     editingFields,
+    changedFields,
     saving,
     onClose,
     onEditField,
+    onSaveField,
+    onClearField,
     onChangeField,
     onSave,
 }: EditPlantModalProps) {
     const isEditing = (
         field: keyof PlantModel
     ) => editingFields.has(field);
+
+    const isChanged = (
+        field: keyof PlantModel
+    ) => changedFields.has(field);
 
     return (
         <div
@@ -31,7 +40,8 @@ export default function EditPlantModal({
                     event.stopPropagation()
                 }
             >
-                {/* Header */}
+                {/* Header                                                     */}
+
                 <div className="flex items-center justify-between border-b border-[#e8ebe5] px-6 py-5">
                     <div>
                         <h2 className="text-lg font-semibold text-[#263126]">
@@ -53,37 +63,74 @@ export default function EditPlantModal({
                     </button>
                 </div>
 
-                {/* Content */}
+                {/* Content                                                    */}
+
                 <div className="overflow-y-auto px-6 py-6">
                     <div className="space-y-6">
-                        {/* Basic Information */}
+
+                        {/* Basic Information                                  */}
+
                         <div>
                             <h3 className="text-sm font-semibold text-[#486344]">
                                 Basic Information
                             </h3>
 
                             <div className="mt-4 grid gap-5 sm:grid-cols-2">
+
+                                {/* Common Name */}
+
                                 <EditableInput
                                     label="Common Name"
                                     value={plant.commonName}
-                                    editing={isEditing("commonName")}
-                                    changed={isChanged("commonName")}
-                                    onEdit={() => onEditField("commonName")}
-                                    onChange={(value) =>
-                                        onChangeField("commonName", value)
+                                    editing={isEditing(
+                                        "commonName"
+                                    )}
+                                    changed={isChanged(
+                                        "commonName"
+                                    )}
+                                    onEdit={() =>
+                                        onEditField(
+                                            "commonName"
+                                        )
                                     }
-                                    onSave={() => saveFieldEdit("commonName")}
-                                    onClear={() => clearFieldEdit("commonName")}
+                                    onSave={() =>
+                                        onSaveField(
+                                            "commonName"
+                                        )
+                                    }
+                                    onChange={(value) =>
+                                        onChangeField(
+                                            "commonName",
+                                            value
+                                        )
+                                    }
+                                    onClear={() =>
+                                        onClearField(
+                                            "commonName"
+                                        )
+                                    }
                                 />
+
+                                {/* Scientific Name */}
 
                                 <EditableInput
                                     label="Scientific Name"
-                                    value={plant.scientificName}
+                                    value={
+                                        plant.scientificName
+                                    }
                                     editing={isEditing(
+                                        "scientificName"
+                                    )}
+                                    changed={isChanged(
                                         "scientificName"
                                     )}
                                     onEdit={() =>
                                         onEditField(
+                                            "scientificName"
+                                        )
+                                    }
+                                    onSave={() =>
+                                        onSaveField(
                                             "scientificName"
                                         )
                                     }
@@ -93,17 +140,33 @@ export default function EditPlantModal({
                                             value
                                         )
                                     }
-                                    onClear={() => {
-                                        // Resets
-                                    }}
+                                    onClear={() =>
+                                        onClearField(
+                                            "scientificName"
+                                        )
+                                    }
                                 />
+
+                                {/* Family */}
 
                                 <EditableInput
                                     label="Family"
                                     value={plant.family}
-                                    editing={isEditing("family")}
+                                    editing={isEditing(
+                                        "family"
+                                    )}
+                                    changed={isChanged(
+                                        "family"
+                                    )}
                                     onEdit={() =>
-                                        onEditField("family")
+                                        onEditField(
+                                            "family"
+                                        )
+                                    }
+                                    onSave={() =>
+                                        onSaveField(
+                                            "family"
+                                        )
                                     }
                                     onChange={(value) =>
                                         onChangeField(
@@ -111,17 +174,33 @@ export default function EditPlantModal({
                                             value
                                         )
                                     }
-                                    onClear={() => {
-                                        // Resets
-                                    }}
+                                    onClear={() =>
+                                        onClearField(
+                                            "family"
+                                        )
+                                    }
                                 />
+
+                                {/* Origin */}
 
                                 <EditableInput
                                     label="Origin"
                                     value={plant.origin}
-                                    editing={isEditing("origin")}
+                                    editing={isEditing(
+                                        "origin"
+                                    )}
+                                    changed={isChanged(
+                                        "origin"
+                                    )}
                                     onEdit={() =>
-                                        onEditField("origin")
+                                        onEditField(
+                                            "origin"
+                                        )
+                                    }
+                                    onSave={() =>
+                                        onSaveField(
+                                            "origin"
+                                        )
                                     }
                                     onChange={(value) =>
                                         onChangeField(
@@ -129,19 +208,35 @@ export default function EditPlantModal({
                                             value
                                         )
                                     }
-                                    onClear={() => {
-                                        // Resets
-                                    }}
+                                    onClear={() =>
+                                        onClearField(
+                                            "origin"
+                                        )
+                                    }
                                 />
                             </div>
                         </div>
 
+                        {/* Description                                         */}
+
                         <EditableTextarea
                             label="Description"
                             value={plant.description}
-                            editing={isEditing("description")}
+                            editing={isEditing(
+                                "description"
+                            )}
+                            changed={isChanged(
+                                "description"
+                            )}
                             onEdit={() =>
-                                onEditField("description")
+                                onEditField(
+                                    "description"
+                                )
+                            }
+                            onSave={() =>
+                                onSaveField(
+                                    "description"
+                                )
                             }
                             onChange={(value) =>
                                 onChangeField(
@@ -149,17 +244,33 @@ export default function EditPlantModal({
                                     value
                                 )
                             }
-                            onClear={() => {
-                                // Resets
-                            }}
+                            onClear={() =>
+                                onClearField(
+                                    "description"
+                                )
+                            }
                         />
+
+                        {/* Uses                                                */}
 
                         <EditableTextarea
                             label="Uses"
                             value={plant.uses}
-                            editing={isEditing("uses")}
+                            editing={isEditing(
+                                "uses"
+                            )}
+                            changed={isChanged(
+                                "uses"
+                            )}
                             onEdit={() =>
-                                onEditField("uses")
+                                onEditField(
+                                    "uses"
+                                )
+                            }
+                            onSave={() =>
+                                onSaveField(
+                                    "uses"
+                                )
                             }
                             onChange={(value) =>
                                 onChangeField(
@@ -167,19 +278,33 @@ export default function EditPlantModal({
                                     value
                                 )
                             }
-                            onClear={() => {
-                                // Resets
-                            }}
+                            onClear={() =>
+                                onClearField(
+                                    "uses"
+                                )
+                            }
                         />
+
+                        {/* Preparation Method                                  */}
 
                         <EditableTextarea
                             label="Preparation Method"
-                            value={plant.preparation_method}
+                            value={
+                                plant.preparation_method
+                            }
                             editing={isEditing(
+                                "preparation_method"
+                            )}
+                            changed={isChanged(
                                 "preparation_method"
                             )}
                             onEdit={() =>
                                 onEditField(
+                                    "preparation_method"
+                                )
+                            }
+                            onSave={() =>
+                                onSaveField(
                                     "preparation_method"
                                 )
                             }
@@ -189,17 +314,33 @@ export default function EditPlantModal({
                                     value
                                 )
                             }
-                            onClear={() => {
-                                // Resets
-                            }}
+                            onClear={() =>
+                                onClearField(
+                                    "preparation_method"
+                                )
+                            }
                         />
+
+                        {/* Side Effects                                        */}
 
                         <EditableTextarea
                             label="Side Effects"
                             value={plant.side_effect}
-                            editing={isEditing("side_effect")}
+                            editing={isEditing(
+                                "side_effect"
+                            )}
+                            changed={isChanged(
+                                "side_effect"
+                            )}
                             onEdit={() =>
-                                onEditField("side_effect")
+                                onEditField(
+                                    "side_effect"
+                                )
+                            }
+                            onSave={() =>
+                                onSaveField(
+                                    "side_effect"
+                                )
                             }
                             onChange={(value) =>
                                 onChangeField(
@@ -207,10 +348,14 @@ export default function EditPlantModal({
                                     value
                                 )
                             }
-                            onClear={() => {
-                                // Resets
-                            }}
+                            onClear={() =>
+                                onClearField(
+                                    "side_effect"
+                                )
+                            }
                         />
+
+                        {/* Medicinal Properties                                */}
 
                         <EditableTextarea
                             label="Medicinal Properties"
@@ -226,8 +371,16 @@ export default function EditPlantModal({
                             editing={isEditing(
                                 "medicinalProperties"
                             )}
+                            changed={isChanged(
+                                "medicinalProperties"
+                            )}
                             onEdit={() =>
                                 onEditField(
+                                    "medicinalProperties"
+                                )
+                            }
+                            onSave={() =>
+                                onSaveField(
                                     "medicinalProperties"
                                 )
                             }
@@ -242,11 +395,15 @@ export default function EditPlantModal({
                                         .filter(Boolean)
                                 )
                             }
-                            onClear={() => {
-                                // Resets
-                            }}
+                            onClear={() =>
+                                onClearField(
+                                    "medicinalProperties"
+                                )
+                            }
                             placeholder="Separate properties with commas"
                         />
+
+                        {/* Categories                                          */}
 
                         <EditableTextarea
                             label="Categories"
@@ -254,12 +411,26 @@ export default function EditPlantModal({
                                 Array.isArray(
                                     plant.categories
                                 )
-                                    ? plant.categories.join(", ")
+                                    ? plant.categories.join(
+                                        ", "
+                                    )
                                     : ""
                             }
-                            editing={isEditing("categories")}
+                            editing={isEditing(
+                                "categories"
+                            )}
+                            changed={isChanged(
+                                "categories"
+                            )}
                             onEdit={() =>
-                                onEditField("categories")
+                                onEditField(
+                                    "categories"
+                                )
+                            }
+                            onSave={() =>
+                                onSaveField(
+                                    "categories"
+                                )
                             }
                             onChange={(value) =>
                                 onChangeField(
@@ -272,18 +443,34 @@ export default function EditPlantModal({
                                         .filter(Boolean)
                                 )
                             }
-                            onClear={() => {
-                                // Resets
-                            }}
+                            onClear={() =>
+                                onClearField(
+                                    "categories"
+                                )
+                            }
                             placeholder="Separate categories with commas"
                         />
+
+                        {/* Image URL                                           */}
 
                         <EditableInput
                             label="Image URL"
                             value={plant.imageUrl}
-                            editing={isEditing("imageUrl")}
+                            editing={isEditing(
+                                "imageUrl"
+                            )}
+                            changed={isChanged(
+                                "imageUrl"
+                            )}
                             onEdit={() =>
-                                onEditField("imageUrl")
+                                onEditField(
+                                    "imageUrl"
+                                )
+                            }
+                            onSave={() =>
+                                onSaveField(
+                                    "imageUrl"
+                                )
                             }
                             onChange={(value) =>
                                 onChangeField(
@@ -291,36 +478,81 @@ export default function EditPlantModal({
                                     value
                                 )
                             }
-                            onClear={() => {
-                                // Resets
-                            }}
+                            onClear={() =>
+                                onClearField(
+                                    "imageUrl"
+                                )
+                            }
                         />
 
-                        {/* Verification */}
+                        {/* Verification                                        */}
+
                         <div>
                             <div className="mb-2 flex items-center justify-between">
                                 <label className="text-xs font-medium text-[#596257]">
                                     Verification Status
                                 </label>
 
-                                {!isEditing("verified") && (
-                                    <button
-                                        type="button"
-                                        onClick={() =>
-                                            onEditField("verified")
-                                        }
-                                        className="flex cursor-pointer items-center gap-1 text-xs font-medium text-[#486344]"
-                                    >
-                                        Edit
-                                    </button>
-                                )}
+                                {!isEditing(
+                                    "verified"
+                                ) &&
+                                    !isChanged(
+                                        "verified"
+                                    ) && (
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                onEditField(
+                                                    "verified"
+                                                )
+                                            }
+                                            className="flex cursor-pointer items-center gap-1 text-xs font-medium text-[#486344]"
+                                        >
+                                            Edit
+                                        </button>
+                                    )}
+
+                                {!isEditing(
+                                    "verified"
+                                ) &&
+                                    isChanged(
+                                        "verified"
+                                    ) && (
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                onClearField(
+                                                    "verified"
+                                                )
+                                            }
+                                            className="text-xs font-medium text-[#7b847a] hover:text-[#c65353]"
+                                        >
+                                            Clear
+                                        </button>
+                                    )}
+
+                                {isEditing(
+                                    "verified"
+                                ) && (
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                onSaveField(
+                                                    "verified"
+                                                )
+                                            }
+                                            className="rounded-md bg-[#486344] px-2.5 py-1 text-xs font-medium text-white"
+                                        >
+                                            Save
+                                        </button>
+                                    )}
                             </div>
 
                             <div className="flex items-center justify-between rounded-lg border border-[#dfe4dc] bg-[#fafbf9] px-4 py-3">
                                 <span
                                     className={`rounded-full px-3 py-1 text-xs font-medium ${plant.verified
-                                        ? "bg-[#edf4eb] text-[#486344]"
-                                        : "bg-[#f3f3f0] text-[#7b847a]"
+                                            ? "bg-[#edf4eb] text-[#486344]"
+                                            : "bg-[#f3f3f0] text-[#7b847a]"
                                         }`}
                                 >
                                     {plant.verified
@@ -328,32 +560,35 @@ export default function EditPlantModal({
                                         : "Unverified"}
                                 </span>
 
-                                {isEditing("verified") && (
-                                    <button
-                                        type="button"
-                                        onClick={() =>
-                                            onChangeField(
-                                                "verified",
-                                                !plant.verified
-                                            )
-                                        }
-                                        className="cursor-pointer rounded-lg bg-[#486344] px-3 py-1.5 text-xs font-medium text-white"
-                                    >
-                                        Change Status
-                                    </button>
-                                )}
+                                {isEditing(
+                                    "verified"
+                                ) && (
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                onChangeField(
+                                                    "verified",
+                                                    !plant.verified
+                                                )
+                                            }
+                                            className="cursor-pointer rounded-lg bg-[#486344] px-3 py-1.5 text-xs font-medium text-white"
+                                        >
+                                            Change Status
+                                        </button>
+                                    )}
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Footer */}
+                {/* Footer                                                     */}
+
                 <div className="flex items-center justify-end gap-3 border-t border-[#e8ebe5] bg-[#fafbf9] px-6 py-4">
                     <button
                         type="button"
                         onClick={onClose}
                         disabled={saving}
-                        className="cursor-pointer rounded-lg border border-[#dfe4dc] bg-white px-4 py-2.5 text-sm font-medium text-[#596257]"
+                        className="cursor-pointer rounded-lg border border-[#dfe4dc] bg-white px-4 py-2.5 text-sm font-medium text-[#596257] disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         Cancel
                     </button>
@@ -362,7 +597,7 @@ export default function EditPlantModal({
                         type="button"
                         onClick={onSave}
                         disabled={saving}
-                        className="flex cursor-pointer items-center gap-2 rounded-lg bg-[#486344] px-5 py-2.5 text-sm font-medium text-white disabled:opacity-60"
+                        className="flex cursor-pointer items-center gap-2 rounded-lg bg-[#486344] px-5 py-2.5 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-60"
                     >
                         {saving ? (
                             "Saving..."

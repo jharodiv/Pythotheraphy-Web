@@ -4,7 +4,9 @@ import {
     RotateCcw,
 } from "lucide-react";
 
-import type { EditableInputProps } from "@type/dashboard/plant.types";
+import type {
+    EditableInputProps,
+} from "@type/dashboard/plant.types";
 
 export default function EditableInput({
     label,
@@ -19,12 +21,14 @@ export default function EditableInput({
     return (
         <div>
             {/* Label */}
+
             <div className="mb-2 flex items-center justify-between">
                 <label className="text-xs font-medium text-[#596257]">
                     {label}
                 </label>
 
                 {/* Edit */}
+
                 {!editing && !changed && (
                     <button
                         type="button"
@@ -32,11 +36,13 @@ export default function EditableInput({
                         className="flex cursor-pointer items-center gap-1 text-xs font-medium text-[#486344]"
                     >
                         <Pencil className="h-3 w-3" />
+
                         Edit
                     </button>
                 )}
 
                 {/* Save */}
+
                 {editing && (
                     <button
                         type="button"
@@ -44,11 +50,13 @@ export default function EditableInput({
                         className="flex cursor-pointer items-center gap-1 rounded-md bg-[#486344] px-2.5 py-1 text-xs font-medium text-white"
                     >
                         <Check className="h-3 w-3" />
+
                         Save
                     </button>
                 )}
 
                 {/* Clear */}
+
                 {!editing && changed && (
                     <button
                         type="button"
@@ -56,12 +64,14 @@ export default function EditableInput({
                         className="flex cursor-pointer items-center gap-1 text-xs font-medium text-[#7b847a] hover:text-[#c65353]"
                     >
                         <RotateCcw className="h-3 w-3" />
+
                         Clear
                     </button>
                 )}
             </div>
 
             {/* Input */}
+
             <input
                 type="text"
                 value={value}

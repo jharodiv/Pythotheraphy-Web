@@ -1,12 +1,9 @@
 import {
-    Check,
     Leaf,
     Pencil,
-    RotateCcw,
     Search,
     SlidersHorizontal,
     Trash2,
-    X,
 } from "lucide-react";
 
 import { useState } from "react";
@@ -16,7 +13,8 @@ import EditPlantModal from "@components/dashboard/plants/editPlantModal";
 import { usePlants } from "@hooks/dashboard/plants/usePlants";
 
 export default function Plants() {
-    const [filterOpen, setFilterOpen] = useState(false);
+    const [filterOpen, setFilterOpen] =
+        useState(false);
 
     const {
         filteredPlants,
@@ -41,7 +39,11 @@ export default function Plants() {
         closeEditModal,
 
         editingFields,
+        changedFields,
+
         enableFieldEdit,
+        saveEditField,
+        clearFieldEdit,
         updateEditField,
 
         saveEdit,
@@ -56,9 +58,8 @@ export default function Plants() {
 
     return (
         <div className="space-y-6">
-            {/* ================================================================ */}
-            {/* Header                                                           */}
-            {/* ================================================================ */}
+
+            {/* Header                                                        */}
 
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
@@ -79,15 +80,15 @@ export default function Plants() {
                 </button>
             </div>
 
-            {/* ================================================================ */}
-            {/* Plants Card                                                      */}
-            {/* ================================================================ */}
+            {/* Plants Card                                                   */}
 
             <div className="rounded-xl border border-[#e1e5de] bg-white shadow-sm">
-                {/* Search and Filter */}
+
+                {/* Search / Filter */}
 
                 <div className="relative z-30 border-b border-[#e8ebe5] p-4">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+
                         {/* Search */}
 
                         <div className="relative max-w-sm flex-1">
@@ -97,7 +98,9 @@ export default function Plants() {
                                 type="text"
                                 value={search}
                                 onChange={(event) =>
-                                    setSearch(event.target.value)
+                                    setSearch(
+                                        event.target.value
+                                    )
                                 }
                                 placeholder="Search plants..."
                                 className="w-full rounded-lg border border-[#dfe4dc] py-2.5 pl-9 pr-3 text-sm text-black outline-none focus:border-[#aab8a5] focus:ring-2 focus:ring-[#edf2ea]"
@@ -110,7 +113,9 @@ export default function Plants() {
                             <button
                                 type="button"
                                 onClick={() =>
-                                    setFilterOpen(!filterOpen)
+                                    setFilterOpen(
+                                        !filterOpen
+                                    )
                                 }
                                 className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-[#dfe4dc] bg-white px-4 py-2.5 text-sm font-medium text-[#596257] transition hover:bg-[#f7f9f5] sm:w-auto"
                             >
@@ -121,7 +126,6 @@ export default function Plants() {
 
                             {filterOpen && (
                                 <div className="absolute right-0 z-50 mt-2 w-40 overflow-hidden rounded-lg border border-[#e1e5de] bg-white shadow-lg">
-                                    {/* All */}
 
                                     <button
                                         type="button"
@@ -130,14 +134,12 @@ export default function Plants() {
                                             setFilterOpen(false);
                                         }}
                                         className={`w-full cursor-pointer px-4 py-2.5 text-left text-sm transition hover:bg-[#f7f9f5] ${filter === "all"
-                                            ? "bg-[#f1f5ef] font-medium text-[#486344]"
-                                            : "text-[#596257]"
+                                                ? "bg-[#f1f5ef] font-medium text-[#486344]"
+                                                : "text-[#596257]"
                                             }`}
                                     >
                                         All Plants
                                     </button>
-
-                                    {/* Verified */}
 
                                     <button
                                         type="button"
@@ -146,14 +148,12 @@ export default function Plants() {
                                             setFilterOpen(false);
                                         }}
                                         className={`w-full cursor-pointer px-4 py-2.5 text-left text-sm transition hover:bg-[#f7f9f5] ${filter === "verified"
-                                            ? "bg-[#f1f5ef] font-medium text-[#486344]"
-                                            : "text-[#596257]"
+                                                ? "bg-[#f1f5ef] font-medium text-[#486344]"
+                                                : "text-[#596257]"
                                             }`}
                                     >
                                         Verified
                                     </button>
-
-                                    {/* Unverified */}
 
                                     <button
                                         type="button"
@@ -162,8 +162,8 @@ export default function Plants() {
                                             setFilterOpen(false);
                                         }}
                                         className={`w-full cursor-pointer px-4 py-2.5 text-left text-sm transition hover:bg-[#f7f9f5] ${filter === "unverified"
-                                            ? "bg-[#f1f5ef] font-medium text-[#486344]"
-                                            : "text-[#596257]"
+                                                ? "bg-[#f1f5ef] font-medium text-[#486344]"
+                                                : "text-[#596257]"
                                             }`}
                                     >
                                         Unverified
@@ -174,9 +174,7 @@ export default function Plants() {
                     </div>
                 </div>
 
-                {/* ============================================================ */}
-                {/* Loading                                                        */}
-                {/* ============================================================ */}
+                {/* Loading                                                       */}
 
                 {loading && (
                     <div className="flex min-h-64 items-center justify-center">
@@ -186,10 +184,7 @@ export default function Plants() {
                     </div>
                 )}
 
-                {/* ============================================================ */}
-                {/* Error                                                          */}
-                {/* ============================================================ */}
-
+                {/* Error                                                         */}
                 {!loading && error && (
                     <div className="flex min-h-64 items-center justify-center text-center">
                         <div>
@@ -204,9 +199,7 @@ export default function Plants() {
                     </div>
                 )}
 
-                {/* ============================================================ */}
-                {/* Empty State                                                    */}
-                {/* ============================================================ */}
+                {/* Empty                                                         */}
 
                 {!loading &&
                     !error &&
@@ -227,131 +220,175 @@ export default function Plants() {
                     )}
 
                 {/* ============================================================ */}
-                {/* Plant List                                                     */}
+                {/* Plant List                                                    */}
                 {/* ============================================================ */}
 
                 {!loading &&
                     !error &&
                     filteredPlants.length > 0 && (
                         <div className="divide-y divide-[#e8ebe5]">
-                            {filteredPlants.map((plant) => {
-                                const isActive =
-                                    activePlant === plant.id;
+                            {filteredPlants.map(
+                                (plant) => {
+                                    const isActive =
+                                        activePlant ===
+                                        plant.id;
 
-                                return (
-                                    <div
-                                        key={plant.id}
-                                        className="relative overflow-hidden"
-                                    >
-                                        {/* Hidden Actions */}
-
-                                        <div className="absolute inset-y-0 right-0 flex w-40">
-                                            {/* Edit */}
-
-                                            <button
-                                                type="button"
-                                                onClick={(event) => {
-                                                    event.stopPropagation();
-
-                                                    openEditModal(plant);
-                                                }}
-                                                className="flex h-full w-20 cursor-pointer items-center justify-center gap-1.5 bg-[#486344] text-white transition hover:bg-[#3d5739]"
-                                            >
-                                                <Pencil className="h-4 w-4" />
-
-                                                <span className="text-xs font-medium">
-                                                    Edit
-                                                </span>
-                                            </button>
-
-                                            {/* Delete */}
-
-                                            <button
-                                                type="button"
-                                                onClick={(event) => {
-                                                    event.stopPropagation();
-
-                                                    removePlant(plant.id);
-                                                }}
-                                                className="flex h-full w-20 cursor-pointer items-center justify-center gap-1.5 bg-[#c65353] text-white transition hover:bg-[#b74747]"
-                                            >
-                                                <Trash2 className="h-4 w-4" />
-
-                                                <span className="text-xs font-medium">
-                                                    Delete
-                                                </span>
-                                            </button>
-                                        </div>
-
-                                        {/* Plant Row */}
-
+                                    return (
                                         <div
-                                            role="button"
-                                            tabIndex={0}
-                                            onClick={() =>
-                                                setActivePlant(
-                                                    isActive
-                                                        ? null
-                                                        : plant.id
-                                                )
-                                            }
-                                            onKeyDown={(event) => {
-                                                if (
-                                                    event.key === "Enter" ||
-                                                    event.key === " "
-                                                ) {
+                                            key={plant.id}
+                                            className="relative overflow-hidden"
+                                        >
+                                            {/* Actions */}
+
+                                            <div className="absolute inset-y-0 right-0 flex w-40">
+
+                                                <button
+                                                    type="button"
+                                                    onClick={(
+                                                        event
+                                                    ) => {
+                                                        event.stopPropagation();
+
+                                                        openEditModal(
+                                                            plant
+                                                        );
+                                                    }}
+                                                    className="flex h-full w-20 cursor-pointer items-center justify-center gap-1.5 bg-[#486344] text-white transition hover:bg-[#3d5739]"
+                                                >
+                                                    <Pencil className="h-4 w-4" />
+
+                                                    <span className="text-xs font-medium">
+                                                        Edit
+                                                    </span>
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    onClick={(
+                                                        event
+                                                    ) => {
+                                                        event.stopPropagation();
+
+                                                        removePlant(
+                                                            plant.id
+                                                        );
+                                                    }}
+                                                    className="flex h-full w-20 cursor-pointer items-center justify-center gap-1.5 bg-[#c65353] text-white transition hover:bg-[#b74747]"
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+
+                                                    <span className="text-xs font-medium">
+                                                        Delete
+                                                    </span>
+                                                </button>
+                                            </div>
+
+                                            {/* Plant Row */}
+
+                                            <div
+                                                role="button"
+                                                tabIndex={0}
+                                                onClick={() =>
                                                     setActivePlant(
                                                         isActive
                                                             ? null
                                                             : plant.id
-                                                    );
+                                                    )
                                                 }
-                                            }}
-                                            className={`relative flex cursor-pointer items-center justify-between bg-white p-4 transition-transform duration-300 ease-in-out hover:bg-[#fafbf9] ${isActive
-                                                ? "-translate-x-40"
-                                                : "translate-x-0"
-                                                }`}
-                                        >
-                                            <div className="min-w-0 flex-1">
-                                                <p className="text-sm font-medium text-[#263126]">
-                                                    {plant.commonName}
-                                                </p>
-
-                                                <p className="mt-1 text-xs italic text-[#7b847a]">
-                                                    {plant.scientificName}
-                                                </p>
-                                            </div>
-
-                                            <span
-                                                className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${plant.verified
-                                                    ? "bg-[#edf4eb] text-[#486344]"
-                                                    : "bg-[#f3f3f0] text-[#7b847a]"
+                                                onKeyDown={(
+                                                    event
+                                                ) => {
+                                                    if (
+                                                        event.key ===
+                                                        "Enter" ||
+                                                        event.key ===
+                                                        " "
+                                                    ) {
+                                                        setActivePlant(
+                                                            isActive
+                                                                ? null
+                                                                : plant.id
+                                                        );
+                                                    }
+                                                }}
+                                                className={`relative flex cursor-pointer items-center justify-between bg-white p-4 transition-transform duration-300 ease-in-out hover:bg-[#fafbf9] ${isActive
+                                                        ? "-translate-x-40"
+                                                        : "translate-x-0"
                                                     }`}
                                             >
-                                                {plant.verified
-                                                    ? "Verified"
-                                                    : "Unverified"}
-                                            </span>
+                                                <div className="min-w-0 flex-1">
+                                                    <p className="text-sm font-medium text-[#263126]">
+                                                        {
+                                                            plant.commonName
+                                                        }
+                                                    </p>
+
+                                                    <p className="mt-1 text-xs italic text-[#7b847a]">
+                                                        {
+                                                            plant.scientificName
+                                                        }
+                                                    </p>
+                                                </div>
+
+                                                <span
+                                                    className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${plant.verified
+                                                            ? "bg-[#edf4eb] text-[#486344]"
+                                                            : "bg-[#f3f3f0] text-[#7b847a]"
+                                                        }`}
+                                                >
+                                                    {plant.verified
+                                                        ? "Verified"
+                                                        : "Unverified"}
+                                                </span>
+                                            </div>
                                         </div>
-                                    </div>
-                                );
-                            })}
+                                    );
+                                }
+                            )}
                         </div>
                     )}
             </div>
 
-            {/* Edit Modal */}
-            {editModalOpen && editForm && (
-                <EditPlantModal
-                    plant={editForm}
-                    editingFields={editingFields}
-                    saving={saving}
-                    onClose={closeEditModal}
-                    onEditField={enableFieldEdit}
-                    onChangeField={updateEditField}
-                    onSave={saveEdit}
-                />
-            )}
+            {/* Edit Modal                                                     */}
+
+            {editModalOpen &&
+                editForm && (
+                    <EditPlantModal
+                        plant={editForm}
+
+                        editingFields={
+                            editingFields
+                        }
+
+                        changedFields={
+                            changedFields
+                        }
+
+                        saving={saving}
+
+                        onClose={
+                            closeEditModal
+                        }
+
+                        onEditField={
+                            enableFieldEdit
+                        }
+
+                        onSaveField={
+                            saveEditField
+                        }
+
+                        onClearField={
+                            clearFieldEdit
+                        }
+
+                        onChangeField={
+                            updateEditField
+                        }
+
+                        onSave={saveEdit}
+                    />
+                )}
         </div>
     );
 }
