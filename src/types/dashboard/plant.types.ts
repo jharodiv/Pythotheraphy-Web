@@ -47,6 +47,7 @@ export interface UsePlantsReturn {
 
     editForm: PlantModel | null;
     editModalOpen: boolean;
+    saveEditField: (field: keyof PlantModel) => void;
     saving: boolean;
 
     openEditModal: (plant: PlantModel) => void;
@@ -90,15 +91,23 @@ export interface EditableInputProps {
     label: string;
     value: string;
     editing: boolean;
+    changed: boolean;
+
     onEdit: () => void;
     onChange: (value: string) => void;
+    onSave: () => void;
+    onClear: () => void;
 }
 
 export interface EditableTextareaProps {
     label: string;
     value: string;
     editing: boolean;
+    changed?: boolean;
+
     onEdit: () => void;
     onChange: (value: string) => void;
+    onSave: () => void;
+    onClear: () => void;
     placeholder?: string;
 }

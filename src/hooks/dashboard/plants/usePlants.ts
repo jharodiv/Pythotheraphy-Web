@@ -45,6 +45,10 @@ export function usePlants(): UsePlantsReturn {
 
     const [editingFields, setEditingFields] = useState<Set<keyof PlantModel>>(new Set());
 
+    const [changeFields, setChangedFields] = useState<Set<keyof PlantModel>>(new Set());
+
+    const [originalPlant, setOriginalPlant] = useState<PlantModel | null>(null);
+
     const [saving, setSaving] = useState(false);
 
 
@@ -246,7 +250,7 @@ export function usePlants(): UsePlantsReturn {
         []
     );
 
-    // Saving the Plant
+    // Saving the Plant in the databse
 
     const saveEdit = useCallback(async () => {
 
@@ -363,9 +367,68 @@ export function usePlants(): UsePlantsReturn {
                     [field]: value,
                 };
             });
+
+            if (!originalPlant) return;
+
+            // Checking if there is changes in the field
+
+            setChangedFields((current) => {
+                const next = new Set(current);
+
+                if (JSON.stringify(originalPlant[field] === JSON.stringify(value))) {
+                    next.delete(field);
+                } else {
+                    next.add(field);
+                }
+
+                return next;
+            });
         },
         []
     );
+
+    // Saving Edit Fields:
+
+    const saveEditField = useCallback(
+        (field: keyof PlantModel) => {
+
+            // Remove field from editing field
+            setEditingFields((previous) => {
+                const updated = new Set(previous);
+                updated.delete(field);
+                return updated;
+            })
+
+            // Mark changed field
+
+            setChangedFields((previous) => {
+                const updated = new Set(previous);
+                updated.add(field);
+                return updated
+            })
+
+        },
+        [editForm, selectedPlant]
+    )
+
+    const clearFieldEdit = useCallback((field: keyof PlantModel) => {
+        if (!originalPlant) return;
+
+        setEditForm((current) => {
+            if (!current) return current;
+
+            return {
+                ...current,
+                [field]: originalPlant[field],
+            };
+        });
+
+        setChangedFields((current) => {
+            const next = new Set(current);
+            next.delete(field);
+            return next;
+        });
+    }, [originalPlant]);
 
 
 
@@ -412,6 +475,7 @@ export function usePlants(): UsePlantsReturn {
         editingFields,
         enableFieldEdit,
         updateEditField,
+        saveEditField,
         saveEdit,
     };
 }
