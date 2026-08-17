@@ -154,3 +154,5 @@ export interface EditableTextareaProps {
     onClear: () => void;
     placeholder?: string;
 }
+
+// FOR DAILY COMMIT, WILL LEAVE THE TOWN FOR 1 NIGHT
