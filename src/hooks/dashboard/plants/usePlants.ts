@@ -10,7 +10,9 @@ import {
     deletePlant,
     getPlantById,
     getPlants,
+    unverifyPlant,
     updatePlant,
+    verifyPlant,
 } from "@service/dashboard/plantsSection/plants.service";
 
 import type { PlantModel } from "@model/dashboard/plants.model";
@@ -390,15 +392,68 @@ export function usePlants(): UsePlantsReturn {
         [originalPlant]
     );
 
+    const handleVerify = useCallback(async (id: string) => {
+        try {
+            setLoading(true);
+            setError(null);
+
+
+            await verifyPlant;
+        } catch (error) {
+            console.error(
+                "Failed to verify the plant",
+                error
+            );
+
+            setError(
+                error instanceof Error
+                    ? error.message
+                    : "Unable to verify plant"
+            );
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    const handleUnverify = useCallback(async (id: string) => {
+        try {
+            setLoading(true);
+            setError(null);
+
+            await unverifyPlant;
+        } catch (error) {
+            console.log(
+                "Failed to unverify the plant",
+                error
+            );
+
+            setError(
+                error instanceof Error
+                    ? error.message
+                    : "Unable to unverify plant."
+            );
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+
     // Save Individual Field Edit
 
     const saveEditField = useCallback(
-        (field: keyof PlantModel) => {
-            // The field is no longer being edited.
-            //
-            // IMPORTANT:
-            // This does NOT save to Firestore.
-            // It only finishes editing this field.
+        async (field: keyof PlantModel): Promise<void> => {
+
+            if (!editForm) {
+                return;
+            }
+
+            if (field === "verified") {
+                if (editForm.verified) {
+                    await handleVerify(editForm.id);
+                } else {
+                    await handleUnverify(editForm.id);
+                }
+            }
             setEditingFields((current) => {
                 const next = new Set(current);
 
@@ -407,7 +462,7 @@ export function usePlants(): UsePlantsReturn {
                 return next;
             });
         },
-        []
+        [editForm, handleVerify, handleUnverify]
     );
 
     // Clear Individual Field Edit
@@ -502,8 +557,6 @@ export function usePlants(): UsePlantsReturn {
         }
     }, [editForm]);
 
-    // Fetch on Mount
-
     useEffect(() => {
         fetchPlants();
     }, [fetchPlants]);
@@ -550,6 +603,10 @@ export function usePlants(): UsePlantsReturn {
 
         saveEditField,
         clearFieldEdit,
+
+        //Verifying Plant
+        handleVerify,
+        handleUnverify,
 
         // Save entire plant
         saveEdit,

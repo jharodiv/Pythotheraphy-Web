@@ -6,6 +6,7 @@ import {
     getDoc,
     getDocs,
     updateDoc,
+    runTransaction,
     type DocumentData,
     type QueryDocumentSnapshot,
 } from "firebase/firestore";
@@ -13,6 +14,7 @@ import {
 import { db } from "@service/database/firebase";
 
 import type { PlantModel } from "@model/dashboard/plants.model";
+import { cache } from "react";
 
 const PLANT_COLLECTION = "plants";
 const PLANT_CACHE_COLLECTION = "plant_cache";
@@ -220,3 +222,70 @@ export async function deletePlant(
         );
     }
 }
+
+export async function verifyPlant(
+    id: string
+): Promise<void> {
+    try {
+        const plantRef = doc(db, PLANT_COLLECTION, id);
+        const cacheRef = doc(db, PLANT_CACHE_COLLECTION, id);
+
+        await runTransaction(db, async (transaction) => {
+            const cacheSnapshot = await transaction.get(cacheRef);
+
+            if (!cacheSnapshot.exists()) {
+                throw new Error("Plant not found in plant cache");
+            }
+
+            const plantData = cacheSnapshot.data();
+
+            transaction.set(plantRef, {
+                ...plantData,
+                verified: true
+            });
+
+
+            transaction.delete(cacheRef);
+        })
+    } catch (error) {
+        console.error(
+            "Failed to verify plant",
+        );
+
+        throw new Error("Unable to verify plant");
+    }
+}
+
+export async function unverifyPlant(
+    id: string
+): Promise<void> {
+    try {
+        const plantRef = doc(db, PLANT_COLLECTION, id);
+        const cacheRef = doc(db, PLANT_CACHE_COLLECTION, id);
+
+        await runTransaction(db, async (transaction) => {
+            const plantSnapshot = await transaction.get(plantRef);
+
+            if (!plantSnapshot.exists()) {
+                throw new Error("Plant not found in verified plants")
+            }
+
+            const plantData = plantSnapshot.data();
+
+            transaction.set(cacheRef, {
+                ...plantData,
+                verified: false
+            });
+
+            transaction.delete(plantRef);
+        })
+    } catch (error) {
+        console.error(
+            "Failed to unverify the plant"
+        )
+
+        throw new Error(
+            "Unable to unverify the plant"
+        )
+    }
+} 
