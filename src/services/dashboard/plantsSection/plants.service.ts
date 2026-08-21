@@ -14,7 +14,6 @@ import {
 import { db } from "@service/database/firebase";
 
 import type { PlantModel } from "@model/dashboard/plants.model";
-import { cache } from "react";
 
 const PLANT_COLLECTION = "plants";
 const PLANT_CACHE_COLLECTION = "plant_cache";

@@ -398,7 +398,7 @@ export function usePlants(): UsePlantsReturn {
             setError(null);
 
 
-            await verifyPlant;
+            await verifyPlant(id);
         } catch (error) {
             console.error(
                 "Failed to verify the plant",
@@ -420,7 +420,7 @@ export function usePlants(): UsePlantsReturn {
             setLoading(true);
             setError(null);
 
-            await unverifyPlant;
+            await unverifyPlant(id);
         } catch (error) {
             console.log(
                 "Failed to unverify the plant",
@@ -441,19 +441,8 @@ export function usePlants(): UsePlantsReturn {
     // Save Individual Field Edit
 
     const saveEditField = useCallback(
-        async (field: keyof PlantModel): Promise<void> => {
+        (field: keyof PlantModel) => {
 
-            if (!editForm) {
-                return;
-            }
-
-            if (field === "verified") {
-                if (editForm.verified) {
-                    await handleVerify(editForm.id);
-                } else {
-                    await handleUnverify(editForm.id);
-                }
-            }
             setEditingFields((current) => {
                 const next = new Set(current);
 
@@ -510,10 +499,16 @@ export function usePlants(): UsePlantsReturn {
 
             const {
                 id,
+                verified,
                 ...plantData
             } = editForm;
 
-            await updatePlant(id, plantData);
+            // Handle verification state
+            if (verified) {
+                await handleVerify(id);
+            } else {
+                await handleUnverify(id);
+            }
 
             // Update local list
             setPlants((current) =>
@@ -522,6 +517,7 @@ export function usePlants(): UsePlantsReturn {
                         ? {
                             ...plant,
                             ...plantData,
+                            verified,
                         }
                         : plant
                 )
@@ -529,33 +525,24 @@ export function usePlants(): UsePlantsReturn {
 
             // Close modal
             setEditModalOpen(false);
-
             setSelectedPlant(null);
-
             setEditForm(null);
-
             setOriginalPlant(null);
-
             setEditingFields(new Set());
-
             setChangedFields(new Set());
+
         } catch (error) {
-            console.error(
-                "Failed to save plant:",
-                error
-            );
+            console.error("Failed to save plant:", error);
 
             setError(
                 error instanceof Error
                     ? error.message
                     : "Unable to update plant."
             );
-
-            throw error;
         } finally {
             setSaving(false);
         }
-    }, [editForm]);
+    }, [editForm, handleVerify, handleUnverify]);
 
     useEffect(() => {
         fetchPlants();
