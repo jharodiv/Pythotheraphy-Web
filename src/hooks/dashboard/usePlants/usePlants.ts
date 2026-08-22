@@ -179,6 +179,7 @@ export function usePlants(): UsePlantsReturn {
             plant: Omit<PlantModel, "id">
         ) => {
             try {
+                setSaving(true);
                 setError(null);
 
                 const newPlant =
@@ -188,7 +189,6 @@ export function usePlants(): UsePlantsReturn {
                     ...current,
                     newPlant,
                 ]);
-
                 return newPlant;
             } catch (error) {
                 console.error(
@@ -202,35 +202,29 @@ export function usePlants(): UsePlantsReturn {
                         : "Unable to add plant."
                 );
 
-                throw new error;
+                throw error;
+            } finally {
+                setSaving(false);
             }
         },
         []
     );
 
-    const handleCreatePlant = async () => {
+    const handleCreatePlant = useCallback(
+        async () => {
+            try {
+                await createPlant(createForm);
 
-        try {
-            setLoading(true);
-            setError(null);
-
-            await createPlant(createForm);
-
-            setCreateModalOpen(false);
-        } catch (error) {
-            console.log(
-                "Failed to create a plant"
-            );
-
-            setError(
-                error instanceof Error
-                    ? error.message
-                    : "Unable to create a Plant"
-            );
-        } finally {
-            setLoading(false);
-        }
-    }
+                setCreateModalOpen(false);
+            } catch (error) {
+                console.error(
+                    "Failed to create a plant:",
+                    error
+                );
+            }
+        },
+        [createPlant, createForm]
+    );
 
     // Open the Create modal
 
@@ -676,6 +670,7 @@ export function usePlants(): UsePlantsReturn {
         closeCreateModal,
         updateCreateField,
         handleCreatePlant,
+        createModalOpen,
 
         editPlant,
         removePlant,

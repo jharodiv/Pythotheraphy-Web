@@ -55,8 +55,9 @@ export interface UsePlantsReturn {
         >,
         value: string | boolean | string[]
     ) => void;
+    createModalOpen: boolean;
 
-    createForm: Omit<PlantModel, "id">; 
+    createForm: Omit<PlantModel, "id">;
     handleCreatePlant: () => Promise<void>;
 
     editPlant: (
