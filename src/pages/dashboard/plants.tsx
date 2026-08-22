@@ -9,12 +9,15 @@ import {
 import { useState } from "react";
 
 import EditPlantModal from "@components/dashboard/plants/editPlantModal";
+import CreatePlantModal from "@components/dashboard/plants/createPlantModal";
 
-import { usePlants } from "@hooks/dashboard/plants/usePlants";
+import { usePlants } from "@hooks/dashboard/usePlants/usePlants";
 
 export default function Plants() {
     const [filterOpen, setFilterOpen] =
         useState(false);
+
+    const [createModalOpen, setCreateModalOpen] = useState(false);
 
     const {
         filteredPlants,
@@ -30,6 +33,11 @@ export default function Plants() {
 
         activePlant,
         setActivePlant,
+
+        createForm,
+        closeCreateModal,
+        updateCreateField,
+        handleCreatePlant,
 
         editForm,
         editModalOpen,
@@ -74,6 +82,7 @@ export default function Plants() {
 
                 <button
                     type="button"
+                    onClick={() => setCreateModalOpen(true)}
                     className="cursor-pointer rounded-lg bg-[#486344] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#3d5739]"
                 >
                     Add Plant
@@ -134,8 +143,8 @@ export default function Plants() {
                                             setFilterOpen(false);
                                         }}
                                         className={`w-full cursor-pointer px-4 py-2.5 text-left text-sm transition hover:bg-[#f7f9f5] ${filter === "all"
-                                                ? "bg-[#f1f5ef] font-medium text-[#486344]"
-                                                : "text-[#596257]"
+                                            ? "bg-[#f1f5ef] font-medium text-[#486344]"
+                                            : "text-[#596257]"
                                             }`}
                                     >
                                         All Plants
@@ -148,8 +157,8 @@ export default function Plants() {
                                             setFilterOpen(false);
                                         }}
                                         className={`w-full cursor-pointer px-4 py-2.5 text-left text-sm transition hover:bg-[#f7f9f5] ${filter === "verified"
-                                                ? "bg-[#f1f5ef] font-medium text-[#486344]"
-                                                : "text-[#596257]"
+                                            ? "bg-[#f1f5ef] font-medium text-[#486344]"
+                                            : "text-[#596257]"
                                             }`}
                                     >
                                         Verified
@@ -162,8 +171,8 @@ export default function Plants() {
                                             setFilterOpen(false);
                                         }}
                                         className={`w-full cursor-pointer px-4 py-2.5 text-left text-sm transition hover:bg-[#f7f9f5] ${filter === "unverified"
-                                                ? "bg-[#f1f5ef] font-medium text-[#486344]"
-                                                : "text-[#596257]"
+                                            ? "bg-[#f1f5ef] font-medium text-[#486344]"
+                                            : "text-[#596257]"
                                             }`}
                                     >
                                         Unverified
@@ -312,8 +321,8 @@ export default function Plants() {
                                                     }
                                                 }}
                                                 className={`relative flex cursor-pointer items-center justify-between bg-white p-4 transition-transform duration-300 ease-in-out hover:bg-[#fafbf9] ${isActive
-                                                        ? "-translate-x-40"
-                                                        : "translate-x-0"
+                                                    ? "-translate-x-40"
+                                                    : "translate-x-0"
                                                     }`}
                                             >
                                                 <div className="min-w-0 flex-1">
@@ -332,8 +341,8 @@ export default function Plants() {
 
                                                 <span
                                                     className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${plant.verified
-                                                            ? "bg-[#edf4eb] text-[#486344]"
-                                                            : "bg-[#f3f3f0] text-[#7b847a]"
+                                                        ? "bg-[#edf4eb] text-[#486344]"
+                                                        : "bg-[#f3f3f0] text-[#7b847a]"
                                                         }`}
                                                 >
                                                     {plant.verified
@@ -389,6 +398,16 @@ export default function Plants() {
                         onSave={saveEdit}
                     />
                 )}
+
+            {createModalOpen && (
+                <CreatePlantModal
+                    plant={createForm}
+                    saving={false}
+                    onClose={closeCreateModal}
+                    onChange={updateCreateField}
+                    onSave={handleCreatePlant}
+                />
+            )}
         </div>
     );
 }

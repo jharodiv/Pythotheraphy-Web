@@ -23,12 +23,19 @@ import type {
 } from "@type/dashboard/plant.types";
 
 export function usePlants(): UsePlantsReturn {
+
+    // Data State
+
     const [plants, setPlants] = useState<PlantModel[]>([]);
+
+    // Filter state
 
     const [search, setSearch] = useState("");
 
     const [filter, setFilter] =
         useState<PlantFilter>("all");
+
+    // Status State
 
     const [loading, setLoading] =
         useState(true);
@@ -64,6 +71,23 @@ export function usePlants(): UsePlantsReturn {
 
     const [saving, setSaving] =
         useState(false);
+
+    const [createForm, setCreateForm] = useState<Omit<PlantModel, "id">>({
+        commonName: "",
+        scientificName: "",
+        family: "",
+        description: "",
+        uses: "",
+        preparation_method: "",
+        origin: "",
+        side_effect: "",
+        medicinalProperties: [],
+        categories: [],
+        imageUrl: "",
+        verified: false,
+    });
+
+    const [createModalOpen, setCreateModalOpen] = useState(false);
 
     // Fetch Plants
 
@@ -178,11 +202,93 @@ export function usePlants(): UsePlantsReturn {
                         : "Unable to add plant."
                 );
 
-                throw error;
+                throw new error;
             }
         },
         []
     );
+
+    const handleCreatePlant = async () => {
+
+        try {
+            setLoading(true);
+            setError(null);
+
+            await createPlant(createForm);
+
+            setCreateModalOpen(false);
+        } catch (error) {
+            console.log(
+                "Failed to create a plant"
+            );
+
+            setError(
+                error instanceof Error
+                    ? error.message
+                    : "Unable to create a Plant"
+            );
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    // Open the Create modal
+
+    const openCreateModal = useCallback(() => {
+
+        setCreateForm({
+            commonName: "",
+            scientificName: "",
+            family: "",
+            description: "",
+            uses: "",
+            preparation_method: "",
+            origin: "",
+            side_effect: "",
+            medicinalProperties: [],
+            categories: [],
+            imageUrl: "",
+            verified: false,
+        });
+
+        setCreateModalOpen(true);
+    }, []);
+
+    // Close the create modal
+
+    const closeCreateModal = useCallback(() => {
+
+        if (saving) {
+            return;
+        }
+
+        setCreateModalOpen(false);
+    }, [saving]);
+
+    const updateCreateField =
+        useCallback(
+            <
+                K extends keyof Omit<
+                    PlantModel,
+                    "id"
+                >
+            >(
+                field: K,
+                value: Omit<
+                    PlantModel,
+                    "id"
+                >[K]
+            ) => {
+
+                setCreateForm(
+                    (current) => ({
+                        ...current,
+                        [field]: value,
+                    })
+                );
+            },
+            []
+        );
 
     // Update Plant
 
@@ -565,6 +671,12 @@ export function usePlants(): UsePlantsReturn {
         fetchPlantById,
 
         createPlant,
+        createForm,
+        openCreateModal,
+        closeCreateModal,
+        updateCreateField,
+        handleCreatePlant,
+
         editPlant,
         removePlant,
 

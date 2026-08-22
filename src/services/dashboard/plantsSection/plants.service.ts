@@ -140,8 +140,12 @@ export async function getPlantById(
 
 export async function addPlant(plant: Omit<PlantModel, "id">): Promise<PlantModel> {
     try {
-        const plantRef = collection(db, PLANT_COLLECTION);
 
+        const collectionName = plant.verified
+            ? PLANT_COLLECTION
+            : PLANT_CACHE_COLLECTION;
+
+        const plantRef = collection (db, collectionName);
 
         const document = await addDoc(
             plantRef,

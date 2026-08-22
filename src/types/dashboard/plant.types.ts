@@ -46,6 +46,19 @@ export interface UsePlantsReturn {
         plant: Omit<PlantModel, "id">
     ) => Promise<PlantModel>;
 
+    openCreateModal: () => void;
+    closeCreateModal: () => void;
+    updateCreateField: (
+        field: keyof Omit<
+            PlantModel,
+            "id"
+        >,
+        value: string | boolean | string[]
+    ) => void;
+
+    createForm: Omit<PlantModel, "id">; 
+    handleCreatePlant: () => Promise<void>;
+
     editPlant: (
         id: string,
         plant: Partial<
@@ -101,7 +114,7 @@ export interface UsePlantsReturn {
     handleUnverify: (
         id: string
     ) => Promise<void>;
-    
+
     // Save Entire Plant
 
     saveEdit: () => Promise<void>;
@@ -163,3 +176,18 @@ export interface EditableTextareaProps {
     onClear: () => void;
     placeholder?: string;
 }
+
+// Create Modal
+
+export interface CreatePlantModalProps {
+    plant: Omit<PlantModel, "id">;
+    saving: boolean;
+    onClose: () => void;
+    onChange: (
+        field: keyof Omit<PlantModel, "id">,
+        value: string | boolean | string[]
+    ) => void;
+    onSave: () => Promise<void>;
+}
+
+
