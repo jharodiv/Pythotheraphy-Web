@@ -17,8 +17,6 @@ export default function Plants() {
     const [filterOpen, setFilterOpen] =
         useState(false);
 
-    const [createModalOpen, setCreateModalOpen] = useState(false);
-
     const {
         filteredPlants,
 
@@ -38,6 +36,8 @@ export default function Plants() {
         closeCreateModal,
         updateCreateField,
         handleCreatePlant,
+        openCreateModal,
+        createModalOpen,
 
         editForm,
         editModalOpen,
@@ -82,7 +82,7 @@ export default function Plants() {
 
                 <button
                     type="button"
-                    onClick={() => setCreateModalOpen(true)}
+                    onClick={openCreateModal}
                     className="cursor-pointer rounded-lg bg-[#486344] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#3d5739]"
                 >
                     Add Plant
@@ -402,7 +402,7 @@ export default function Plants() {
             {createModalOpen && (
                 <CreatePlantModal
                     plant={createForm}
-                    saving={false}
+                    saving={saving}
                     onClose={closeCreateModal}
                     onChange={updateCreateField}
                     onSave={handleCreatePlant}
