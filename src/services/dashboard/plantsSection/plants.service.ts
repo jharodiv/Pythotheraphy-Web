@@ -145,7 +145,7 @@ export async function addPlant(plant: Omit<PlantModel, "id">): Promise<PlantMode
             ? PLANT_COLLECTION
             : PLANT_CACHE_COLLECTION;
 
-        const plantRef = collection (db, collectionName);
+        const plantRef = collection(db, collectionName);
 
         const document = await addDoc(
             plantRef,
@@ -204,24 +204,40 @@ export async function updatePlant(
  */
 
 export async function deletePlant(
-    id: string
+    id: string,
 ): Promise<void> {
     try {
-        const plantRef = doc(
-            db,
-            PLANT_COLLECTION,
-            id
-        );
+        const plantRef = doc(db, PLANT_COLLECTION, id);
+        const cacheRef = doc(db, PLANT_CACHE_COLLECTION, id);
 
-        await deleteDoc(plantRef);
+        // check verified plants
+
+        const plantSnapshot = await getDoc(plantRef);
+
+        if (plantSnapshot.exists()) {
+            await deleteDoc(plantRef);
+
+            return;
+        }
+
+        const cacheSnapshot = await getDoc(cacheRef);
+
+        if (cacheSnapshot.exists()) {
+            await deleteDoc(cacheRef);
+
+            return;
+        }
+
+        throw new Error(
+            `Plant with ID ${id} does not exist.`
+        );
     } catch (error) {
         console.error(
-            `Failed to delete plant with ID ${id}:`,
-            error
+            "Failed to delete the plant"
         );
 
         throw new Error(
-            "Unable to delete plant."
+            "Unable to delete plant"
         );
     }
 }

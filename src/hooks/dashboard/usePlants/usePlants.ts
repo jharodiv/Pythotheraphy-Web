@@ -87,13 +87,7 @@ export function usePlants(): UsePlantsReturn {
         verified: false,
     });
 
-    const [createModalOpen, setCreateModalOpen] =
-        useState(false);
-
-    console.log(
-        "createModalOpen:",
-        createModalOpen
-    );
+    const [createModalOpen, setCreateModalOpen] = useState(false);
 
     // Fetch Plants
 
@@ -260,14 +254,12 @@ export function usePlants(): UsePlantsReturn {
 
     const closeCreateModal = useCallback(() => {
 
-        /*if (saving) {
+        if (saving) {
             return;
-        }*/
-
-        console.log("CLOSE CREATE MODAL");
+        }
 
         setCreateModalOpen(false);
-    }, []); //saving
+    }, [saving]);
 
     const updateCreateField =
         useCallback(
@@ -532,7 +524,7 @@ export function usePlants(): UsePlantsReturn {
 
             await unverifyPlant(id);
         } catch (error) {
-            console.log(
+            console.error(
                 "Failed to unverify the plant",
                 error
             );
