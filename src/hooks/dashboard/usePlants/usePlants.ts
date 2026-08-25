@@ -496,9 +496,7 @@ export function usePlants(): UsePlantsReturn {
 
     const handleVerify = useCallback(async (id: string) => {
         try {
-            setLoading(true);
             setError(null);
-
 
             await verifyPlant(id);
         } catch (error) {
@@ -512,14 +510,13 @@ export function usePlants(): UsePlantsReturn {
                     ? error.message
                     : "Unable to verify plant"
             );
-        } finally {
-            setLoading(false);
+
+            throw error;
         }
     }, []);
 
     const handleUnverify = useCallback(async (id: string) => {
         try {
-            setLoading(true);
             setError(null);
 
             await unverifyPlant(id);
@@ -534,8 +531,8 @@ export function usePlants(): UsePlantsReturn {
                     ? error.message
                     : "Unable to unverify plant."
             );
-        } finally {
-            setLoading(false);
+
+            throw error;
         }
     }, []);
 
@@ -605,11 +602,14 @@ export function usePlants(): UsePlantsReturn {
                 ...plantData
             } = editForm;
 
-            // Handle verification state
-            if (verified) {
-                await handleVerify(id);
-            } else {
-                await handleUnverify(id);
+            await updatePlant(id, plantData);
+
+            if (verified !== originalPlant?.verified) {
+                if (verified) {
+                    await handleVerify(id);
+                } else {
+                    await handleUnverify(id);
+                }
             }
 
             // Update local list

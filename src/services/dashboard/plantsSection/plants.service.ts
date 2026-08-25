@@ -183,10 +183,31 @@ export async function updatePlant(
             id
         );
 
-        await updateDoc(
-            plantRef,
-            plant
+        const cacheRef = doc(
+            db,
+            PLANT_CACHE_COLLECTION,
+            id
         );
+
+        const [plantSnapshot, cacheSnapshot] = await Promise.all([
+            getDoc(plantRef),
+            getDoc(cacheRef)
+        ])
+
+        if (plantSnapshot.exists()) {
+            await updateDoc(plantRef, plant);
+            return;
+        }
+
+        if (cacheSnapshot.exists()) {
+            await updateDoc(cacheRef, plant);
+            return;
+        }
+
+        throw new Error(
+            `Plant with ID ${id} does not exist`
+        );
+
     } catch (error) {
         console.error(
             `Failed to update plant with ID ${id}:`,
