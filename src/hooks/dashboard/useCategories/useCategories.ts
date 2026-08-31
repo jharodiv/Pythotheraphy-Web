@@ -8,6 +8,8 @@ export function useCategories(): UseCategoriesReturn {
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [isCategoryPlantsModalOpen, setIsCategoryPlantsModalOpen] = useState(false);
+    const [isSelectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [categories, setCategories] = useState<CategoryModel[]>([]);
     const [categoriesCount, setCategoriesCount] = useState<CategoryCount[]>([]);
     const [getCategoryPlantCountsById, setCategoryPlantCountsById] = useState<PlantModel[]>([]);
@@ -61,6 +63,7 @@ export function useCategories(): UseCategoriesReturn {
 
             setCategoryPlantCountsById(data);
 
+            // WILL REMOVE IF UI IS DONE.
             return data;
         } catch (error) {
             console.error(
@@ -71,6 +74,16 @@ export function useCategories(): UseCategoriesReturn {
         } finally {
             setLoading(false);
         }
+    }, [])
+
+    const openPlantModal = useCallback((category: string) => {
+        setSelectedCategory(category);
+        setIsCategoryPlantsModalOpen(true);
+    }, [])
+
+    const closePlantModal = useCallback(() => {
+        setSelectedCategory(null);
+        setIsCategoryPlantsModalOpen(false);
     }, [])
 
     useEffect(() => {
@@ -85,6 +98,9 @@ export function useCategories(): UseCategoriesReturn {
         categoriesCount,
         getCategoryPlantCountsById,
 
+        isCategoryPlantsModalOpen,
+        isSelectedCategory,
+
         loading,
         error,
 
@@ -93,9 +109,13 @@ export function useCategories(): UseCategoriesReturn {
         setCategories,
         setCategoriesCount,
         setCategoryPlantCountsById,
+        setIsCategoryPlantsModalOpen,
+        setSelectedCategory,
 
         fetchCategories,
         fetchCategoriesCount,
-        fetchPlantsByCategory
+        fetchPlantsByCategory,
+        openPlantModal,
+        closePlantModal
     };
 }

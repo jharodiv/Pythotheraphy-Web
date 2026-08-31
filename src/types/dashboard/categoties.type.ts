@@ -7,6 +7,8 @@ export interface UseCategoriesReturn {
     error: string | null;
     categoriesCount: CategoryCount[];
     getCategoryPlantCountsById: PlantModel[];
+    selectedCategory: string | null;
+    setSelectedCategory: (selectedCategory: string | null) => void;
     setLoading: (loading: boolean) => void;
     setError: (error: string | null) => void;
     setCategories: (categories: CategoryModel[]) => void;
@@ -15,4 +17,15 @@ export interface UseCategoriesReturn {
     fetchCategories: () => Promise<void>;
     fetchCategoriesCount: () => Promise<void>;
     fetchPlantsByCategory: (category: string) => Promise<void>;
+    openPlantModal: (category: string) => void;
+    closePlantModal: () => void;
+    isCategoryPlantsModalOpen: boolean;
+    setCategoryPlantsModalOpen: (isCategoryPlantsModalOpen: boolean) => void;
+}
+
+export interface CategoryPlantsModalProps {
+    isOpen: boolean;
+    categoryName: string;
+    plants: PlantModel[];
+    onClose: () => void;
 }
