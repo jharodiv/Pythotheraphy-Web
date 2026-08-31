@@ -7,7 +7,7 @@ export interface UseCategoriesReturn {
     error: string | null;
     categoriesCount: CategoryCount[];
     getCategoryPlantCountsById: PlantModel[];
-    selectedCategory: string | null;
+    isSelectedCategory: string | null;
     setSelectedCategory: (selectedCategory: string | null) => void;
     setLoading: (loading: boolean) => void;
     setError: (error: string | null) => void;
@@ -20,7 +20,7 @@ export interface UseCategoriesReturn {
     openPlantModal: (category: string) => void;
     closePlantModal: () => void;
     isCategoryPlantsModalOpen: boolean;
-    setCategoryPlantsModalOpen: (isCategoryPlantsModalOpen: boolean) => void;
+    setIsCategoryPlantsModalOpen: (isCategoryPlantsModalOpen: boolean) => void;
 }
 
 export interface CategoryPlantsModalProps {

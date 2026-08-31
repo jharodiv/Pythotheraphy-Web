@@ -63,8 +63,6 @@ export function useCategories(): UseCategoriesReturn {
 
             setCategoryPlantCountsById(data);
 
-            // WILL REMOVE IF UI IS DONE.
-            return data;
         } catch (error) {
             console.error(
                 "Failed to fetch the categories plants by id"
