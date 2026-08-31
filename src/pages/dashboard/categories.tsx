@@ -18,7 +18,7 @@ export default function Categories() {
     const {
         categories,
         categoriesCount,
-        selectedCategory,
+        isSelectedCategory,
         isCategoryPlantsModalOpen,
         getCategoryPlantCountsById,
 
@@ -324,7 +324,7 @@ export default function Categories() {
                 }
 
                 categoryName={
-                    selectedCategory ?? ""
+                    isSelectedCategory ?? ""
                 }
 
                 plants={
