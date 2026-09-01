@@ -1,8 +1,11 @@
 import {
     getDocs,
     collection,
+    addDoc,
+    serverTimestamp,
     query,
-    where
+    where,
+    Timestamp
 } from "firebase/firestore";
 
 import type { CategoryModel, CategoryCount } from "@model/dashboard/categories.model";
@@ -22,6 +25,8 @@ export async function getCategories(): Promise<CategoryModel[]> {
             return {
                 id: doc.id,
                 label: data.label,
+                created_at: data.created_at as Timestamp,
+                updated_at: data.updated_at as Timestamp
             }
         });
 
@@ -111,6 +116,36 @@ export async function getCategoriesPlantsById(category: string): Promise<PlantMo
 
         throw new Error(
             "Unable to load plants for this category"
+        );
+    }
+}
+
+// Create Plants Category
+export async function createPlantCategory(label: string): Promise<CategoryModel> {
+    try {
+
+        const now = Timestamp.now();
+
+        const docRef = await addDoc(collection(db, "categories"), {
+            label,
+            created_at: now,
+            updated_at: now
+        });
+
+        return {
+            id: docRef.id,
+            label,
+            created_at: now,
+            updated_at: now
+        }
+    } catch (error) {
+        console.error(
+            "Failed to create category:",
+            error
+        );
+
+        throw new Error(
+            "Unable to create category"
         );
     }
 }

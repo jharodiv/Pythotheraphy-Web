@@ -1,6 +1,7 @@
 import { useCategories } from "@hooks/dashboard/useCategories/useCategories";
 
 import CategoryPlantsModal from "@components/dashboard/categories/plantModal";
+import CreateCategoryModal from "@components/dashboard/categories/createCategoryModal";
 
 import {
     FolderTree,
@@ -16,18 +17,26 @@ import { useState } from "react";
 export default function Categories() {
 
     const {
-        categories,
         categoriesCount,
         isSelectedCategory,
         isCategoryPlantsModalOpen,
         getCategoryPlantCountsById,
+        isNewCategoryModalOpen,
+        isCreating,
+        closeNewCategoryModal,
+        createNewCategory,
 
+        search,
+        setSearch,
         loading,
         error,
 
         fetchPlantsByCategory,
         openPlantModal,
         closePlantModal,
+        openNewCategoryModal,
+
+        filteredCategories,
 
     } = useCategories();
 
@@ -104,6 +113,7 @@ export default function Categories() {
 
 
                 <button
+                    onClick={openNewCategoryModal}
                     className="flex items-center gap-2 rounded-lg bg-[#486344] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#3d5739]"
                 >
 
@@ -127,6 +137,10 @@ export default function Categories() {
                 <input
                     type="text"
                     placeholder="Search categories..."
+                    value={search}
+                    onChange={(event) =>
+                        setSearch(event.target.value)
+                    }
                     className="w-full rounded-lg border border-[#e1e5de] bg-white py-2.5 pl-10 pr-4 text-sm text-[#263126] outline-none transition placeholder:text-[#929a91] focus:border-[#486344] focus:ring-2 focus:ring-[#486344]/10"
                 />
 
@@ -157,7 +171,7 @@ export default function Categories() {
 
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 
-                    {categories.map((category) => {
+                    {filteredCategories.map((category) => {
 
                         const categoryCount =
                             categoriesCount.find(
@@ -334,6 +348,13 @@ export default function Categories() {
                 onClose={
                     closePlantModal
                 }
+            />
+
+            <CreateCategoryModal
+                isOpen={isNewCategoryModalOpen}
+                onClose={closeNewCategoryModal}
+                onCreate={createNewCategory}
+                isCreating={isCreating}
             />
 
         </div>

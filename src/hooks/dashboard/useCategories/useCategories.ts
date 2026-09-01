@@ -1,14 +1,17 @@
 import type { CategoryModel, CategoryCount } from "@model/dashboard/categories.model";
 import type { PlantModel } from "@model/dashboard/plants.model";
-import { getCategories, getCategoryPlantCounts, getCategoriesPlantsById } from "@service/dashboard/categorySection/category.service";
+import { getCategories, getCategoryPlantCounts, getCategoriesPlantsById, createPlantCategory } from "@service/dashboard/categorySection/category.service";
 import type { UseCategoriesReturn } from "@type/dashboard/categoties.type";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 export function useCategories(): UseCategoriesReturn {
 
     const [loading, setLoading] = useState(false);
+    const [isCreating, setIsCreating] = useState(false);
     const [error, setError] = useState(null);
+    const [search, setSearch] = useState("");
     const [isCategoryPlantsModalOpen, setIsCategoryPlantsModalOpen] = useState(false);
+    const [isNewCategoryModalOpen, setIsNewCategoryModalOpen] = useState(false);
     const [isSelectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [categories, setCategories] = useState<CategoryModel[]>([]);
     const [categoriesCount, setCategoriesCount] = useState<CategoryCount[]>([]);
@@ -84,6 +87,53 @@ export function useCategories(): UseCategoriesReturn {
         setIsCategoryPlantsModalOpen(false);
     }, [])
 
+    const filteredCategories = useMemo(() => {
+        return categories.filter((category) =>
+            category.label
+                .toLowerCase()
+                .includes(search.toLowerCase())
+        )
+    }, [categories, search])
+
+    // Open New Category Modal
+    const openNewCategoryModal = useCallback(() => {
+        setIsNewCategoryModalOpen(true);
+    }, [])
+    // Close New Category Modal
+    const closeNewCategoryModal = useCallback(() => {
+        setIsNewCategoryModalOpen(false);
+    }, [])
+
+
+    const createNewCategory = useCallback(
+        async (label: string): Promise<void> => {
+            try {
+                setIsCreating(true);
+                setError(null);
+
+                const newCategory = await createPlantCategory(label);
+
+                setCategories((current) => [
+                    ...current,
+                    newCategory
+                ]);
+
+                closeNewCategoryModal();
+
+                console.log(
+                    "Successfully Created a Plant Category"
+                )
+            } catch (error) {
+                console.error(
+                    "Failed to create a category"
+                );
+
+                setError(error instanceof Error ? error.message : "Unable to create a category");
+            } finally {
+                setIsCreating(false);
+            }
+        }, [fetchCategories, closeNewCategoryModal])
+
     useEffect(() => {
         fetchCategories();
         fetchCategoriesCount();
@@ -100,20 +150,30 @@ export function useCategories(): UseCategoriesReturn {
         isSelectedCategory,
 
         loading,
+        isCreating,
         error,
+        search,
 
         setLoading,
         setError,
+        setSearch,
         setCategories,
         setCategoriesCount,
         setCategoryPlantCountsById,
         setIsCategoryPlantsModalOpen,
         setSelectedCategory,
+        setIsCreating,
+        setIsNewCategoryModalOpen,
 
         fetchCategories,
         fetchCategoriesCount,
         fetchPlantsByCategory,
+        filteredCategories,
+        createNewCategory,
         openPlantModal,
-        closePlantModal
+        closePlantModal,
+        openNewCategoryModal,
+        closeNewCategoryModal,
+        isNewCategoryModalOpen,
     };
 }
