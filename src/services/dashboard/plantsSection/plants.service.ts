@@ -177,17 +177,8 @@ export async function updatePlant(
     plant: Partial<Omit<PlantModel, "id">>
 ): Promise<void> {
     try {
-        const plantRef = doc(
-            db,
-            PLANT_COLLECTION,
-            id
-        );
-
-        const cacheRef = doc(
-            db,
-            PLANT_CACHE_COLLECTION,
-            id
-        );
+        const plantRef = doc(db,PLANT_COLLECTION,id);
+        const cacheRef = doc(db,PLANT_CACHE_COLLECTION,id);
 
         const [plantSnapshot, cacheSnapshot] = await Promise.all([
             getDoc(plantRef),

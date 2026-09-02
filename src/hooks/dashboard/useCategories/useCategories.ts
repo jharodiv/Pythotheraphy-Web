@@ -16,6 +16,7 @@ export function useCategories(): UseCategoriesReturn {
     const [categories, setCategories] = useState<CategoryModel[]>([]);
     const [categoriesCount, setCategoriesCount] = useState<CategoryCount[]>([]);
     const [getCategoryPlantCountsById, setCategoryPlantCountsById] = useState<PlantModel[]>([]);
+    const [selectedCategoryPlants, setSelectedCategoryPlants] = useState<PlantModel[]>([]);
 
     const fetchCategories = useCallback(async () => {
         try {
@@ -77,8 +78,9 @@ export function useCategories(): UseCategoriesReturn {
         }
     }, [])
 
-    const openPlantModal = useCallback((category: string) => {
+    const openPlantModal = useCallback((category: string, categoryPlants: PlantModel[]) => {
         setSelectedCategory(category);
+        setSelectedCategoryPlants(categoryPlants);
         setIsCategoryPlantsModalOpen(true);
     }, [])
 
@@ -148,6 +150,7 @@ export function useCategories(): UseCategoriesReturn {
 
         isCategoryPlantsModalOpen,
         isSelectedCategory,
+        selectedCategoryPlants,
 
         loading,
         isCreating,
@@ -164,6 +167,7 @@ export function useCategories(): UseCategoriesReturn {
         setSelectedCategory,
         setIsCreating,
         setIsNewCategoryModalOpen,
+        setSelectedCategoryPlants,
 
         fetchCategories,
         fetchCategoriesCount,

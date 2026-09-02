@@ -13,6 +13,7 @@ export interface UseCategoriesReturn {
     isSelectedCategory: string | null;
     isNewCategoryModalOpen: boolean;
     isCategoryPlantsModalOpen: boolean;
+    selectedCategoryPlants: PlantModel[];
     setSelectedCategory: (selectedCategory: string | null) => void;
     setSearch: (search: string) => void;
     setLoading: (loading: boolean) => void;
@@ -21,10 +22,11 @@ export interface UseCategoriesReturn {
     setCategories: (categories: CategoryModel[]) => void;
     setCategoriesCount: (categoriesCount: CategoryCount[]) => void;
     setCategoryPlantCountsById: (getCategoryPlantCountsById: PlantModel[]) => void;
+    setSelectedCategoryPlants: (selectedCategoryPlants: PlantModel[]) => void;
     fetchCategories: () => Promise<void>;
     fetchCategoriesCount: () => Promise<void>;
     fetchPlantsByCategory: (category: string) => Promise<void>;
-    openPlantModal: (category: string) => void;
+    openPlantModal: (category: string, categoryPlants: PlantModel[]) => void;
     openNewCategoryModal: () => void;
     closeNewCategoryModal: () => void;
     closePlantModal: () => void;

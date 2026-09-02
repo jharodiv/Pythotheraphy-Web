@@ -31,7 +31,7 @@ export default function Categories() {
         loading,
         error,
 
-        fetchPlantsByCategory,
+        //fetchPlantsByCategory,
         openPlantModal,
         closePlantModal,
         openNewCategoryModal,
@@ -57,40 +57,12 @@ export default function Categories() {
 
     };
 
+    const handleCategoryClick = (category: string) => {
+        const categoryPlants = getCategoryPlantCountsById.filter((plant) =>
+            plant.categories.includes(category));
 
-    const handleCategoryClick = async (
-        category: string
-    ) => {
-
-        try {
-
-            console.log(
-                "Category clicked:",
-                category
-            );
-
-
-            await fetchPlantsByCategory(
-                category
-            );
-
-
-            openPlantModal(
-                category
-            );
-
-
-        } catch (error) {
-
-            console.error(
-                "Failed to fetch plants for category:",
-                error
-            );
-
-        }
-
-    };
-
+        openPlantModal(category, categoryPlants);
+    }
 
     return (
         <div className="space-y-6">
