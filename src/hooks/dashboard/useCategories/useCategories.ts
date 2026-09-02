@@ -1,6 +1,6 @@
 import type { CategoryModel, CategoryCount } from "@model/dashboard/categories.model";
 import type { PlantModel } from "@model/dashboard/plants.model";
-import { getCategories, getCategoryPlantCounts, getCategoriesPlantsById, createPlantCategory } from "@service/dashboard/categorySection/category.service";
+import { getCategories, getCategoryPlantCounts, getCategoriesPlantsById, createPlantCategory, updatePlantCategory } from "@service/dashboard/categorySection/category.service";
 import type { UseCategoriesReturn } from "@type/dashboard/categoties.type";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -8,15 +8,49 @@ export function useCategories(): UseCategoriesReturn {
 
     const [loading, setLoading] = useState(false);
     const [isCreating, setIsCreating] = useState(false);
+    const [isUpdating, setIsUpdating] = useState(false);
     const [error, setError] = useState(null);
     const [search, setSearch] = useState("");
     const [isCategoryPlantsModalOpen, setIsCategoryPlantsModalOpen] = useState(false);
     const [isNewCategoryModalOpen, setIsNewCategoryModalOpen] = useState(false);
-    const [isSelectedCategory, setSelectedCategory] = useState<string | null>(null);
-    const [categories, setCategories] = useState<CategoryModel[]>([]);
+    const [isEditCategoryModalOpen, setIsEditCategoryModalOpen] = useState(false);
+    const [isSelectedCategory, setIsSelectedCategory] = useState<string | null>(null); const [categories, setCategories] = useState<CategoryModel[]>([]);
+    const [selectedCategory, setSelectedCategory] = useState<CategoryModel | null>(null);
     const [categoriesCount, setCategoriesCount] = useState<CategoryCount[]>([]);
     const [getCategoryPlantCountsById, setCategoryPlantCountsById] = useState<PlantModel[]>([]);
     const [selectedCategoryPlants, setSelectedCategoryPlants] = useState<PlantModel[]>([]);
+
+    const openNewCategoryModal = useCallback(() => {
+        setIsNewCategoryModalOpen(true);
+    }, [])
+
+    const closeNewCategoryModal = useCallback(() => {
+        setIsNewCategoryModalOpen(false);
+    }, [])
+
+    const openEditCategoryModal = useCallback(
+        (category: CategoryModel) => {
+            setSelectedCategory(category);
+            setIsEditCategoryModalOpen(true);
+        },
+        []
+    );
+
+    const closeEditCategoryModal = useCallback(() => {
+        setIsEditCategoryModalOpen(false);
+    }, [])
+
+    const openPlantModal = useCallback((category: string, categoryPlants: PlantModel[]) => {
+        setIsSelectedCategory(category);
+        setSelectedCategoryPlants(categoryPlants);
+        setIsCategoryPlantsModalOpen(true);
+    }, [])
+
+    const closePlantModal = useCallback(() => {
+        setIsSelectedCategory(null);
+        setIsCategoryPlantsModalOpen(false);
+    }, [])
+
 
     const fetchCategories = useCallback(async () => {
         try {
@@ -78,17 +112,6 @@ export function useCategories(): UseCategoriesReturn {
         }
     }, [])
 
-    const openPlantModal = useCallback((category: string, categoryPlants: PlantModel[]) => {
-        setSelectedCategory(category);
-        setSelectedCategoryPlants(categoryPlants);
-        setIsCategoryPlantsModalOpen(true);
-    }, [])
-
-    const closePlantModal = useCallback(() => {
-        setSelectedCategory(null);
-        setIsCategoryPlantsModalOpen(false);
-    }, [])
-
     const filteredCategories = useMemo(() => {
         return categories.filter((category) =>
             category.label
@@ -97,14 +120,35 @@ export function useCategories(): UseCategoriesReturn {
         )
     }, [categories, search])
 
-    // Open New Category Modal
-    const openNewCategoryModal = useCallback(() => {
-        setIsNewCategoryModalOpen(true);
-    }, [])
-    // Close New Category Modal
-    const closeNewCategoryModal = useCallback(() => {
-        setIsNewCategoryModalOpen(false);
-    }, [])
+    const updateCategory = useCallback(
+        async (id: string, label: string): Promise<void> => {
+            try {
+                setIsUpdating(true);
+                setError(null);
+
+                await updatePlantCategory(id, label);
+
+                setCategories((current) =>
+                    current.map((category) =>
+                        category.id === id
+                            ? { ...category, label }
+                            : category
+                    )
+                );
+
+                closeEditCategoryModal();
+
+            } catch (error) {
+                console.error(
+                    "Failed to update a category"
+                );
+
+                setError(error instanceof Error ? error.message : "Unable to update a category");
+            } finally {
+                setIsUpdating(false);
+            }
+        }, [closeEditCategoryModal]
+    )
 
 
     const createNewCategory = useCallback(
@@ -151,9 +195,12 @@ export function useCategories(): UseCategoriesReturn {
         isCategoryPlantsModalOpen,
         isSelectedCategory,
         selectedCategoryPlants,
+        isEditCategoryModalOpen,
+        selectedCategory,
 
         loading,
         isCreating,
+        isUpdating,
         error,
         search,
 
@@ -164,20 +211,26 @@ export function useCategories(): UseCategoriesReturn {
         setCategoriesCount,
         setCategoryPlantCountsById,
         setIsCategoryPlantsModalOpen,
+        setIsSelectedCategory,
         setSelectedCategory,
         setIsCreating,
         setIsNewCategoryModalOpen,
         setSelectedCategoryPlants,
+        setIsUpdating,
+        setIsEditCategoryModalOpen,
 
         fetchCategories,
         fetchCategoriesCount,
         fetchPlantsByCategory,
         filteredCategories,
         createNewCategory,
+        updateCategory,
         openPlantModal,
         closePlantModal,
         openNewCategoryModal,
         closeNewCategoryModal,
+        openEditCategoryModal,
+        closeEditCategoryModal,
         isNewCategoryModalOpen,
     };
 }

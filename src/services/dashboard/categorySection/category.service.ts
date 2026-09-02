@@ -2,10 +2,11 @@ import {
     getDocs,
     collection,
     addDoc,
-    serverTimestamp,
     query,
     where,
-    Timestamp
+    Timestamp,
+    doc,
+    updateDoc,
 } from "firebase/firestore";
 
 import type { CategoryModel, CategoryCount } from "@model/dashboard/categories.model";
@@ -146,6 +147,34 @@ export async function createPlantCategory(label: string): Promise<CategoryModel>
 
         throw new Error(
             "Unable to create category"
+        );
+    }
+}
+
+// Updating a plant
+
+export async function updatePlantCategory(id: string, label: string): Promise<void> {
+    try {
+
+        const now = Timestamp.now();
+
+
+        const categoryRef = doc(db, "categories", id);
+
+
+        await updateDoc(categoryRef, {
+            label,
+            updated_at: now
+        });
+
+    } catch (error) {
+        console.error(
+            "Failed to update category",
+            error
+        )
+
+        throw new Error(
+            "Unable to update category"
         );
     }
 }

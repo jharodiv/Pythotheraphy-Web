@@ -2,6 +2,7 @@ import { useCategories } from "@hooks/dashboard/useCategories/useCategories";
 
 import CategoryPlantsModal from "@components/dashboard/categories/plantModal";
 import CreateCategoryModal from "@components/dashboard/categories/createCategoryModal";
+import EditCategoryModal from "@components/dashboard/categories/editCategoryModal";
 
 import {
     FolderTree,
@@ -22,9 +23,16 @@ export default function Categories() {
         isCategoryPlantsModalOpen,
         getCategoryPlantCountsById,
         isNewCategoryModalOpen,
+        isEditCategoryModalOpen,
         isCreating,
+        selectedCategory,
         closeNewCategoryModal,
         createNewCategory,
+        closeEditCategoryModal,
+        isUpdating,
+        updateCategory,
+        openEditCategoryModal,
+
 
         search,
         setSearch,
@@ -238,24 +246,16 @@ export default function Categories() {
                                                 {/* Edit */}
 
                                                 <button
-
                                                     onClick={(event) => {
-
                                                         event.stopPropagation();
-
                                                         setOpenMenu(null);
 
-                                                        // Edit logic
-
+                                                        openEditCategoryModal(category);
                                                     }}
-
                                                     className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[#263126] transition hover:bg-[#f5f7f3]"
                                                 >
-
                                                     <Pencil className="h-4 w-4" />
-
                                                     Edit
-
                                                 </button>
 
 
@@ -327,6 +327,14 @@ export default function Categories() {
                 onClose={closeNewCategoryModal}
                 onCreate={createNewCategory}
                 isCreating={isCreating}
+            />
+
+            <EditCategoryModal
+                isOpen={isEditCategoryModalOpen}
+                onClose={closeEditCategoryModal}
+                onEdit={updateCategory}
+                isEditing={isUpdating}
+                category={selectedCategory}
             />
 
         </div>
