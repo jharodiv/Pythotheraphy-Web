@@ -20,34 +20,36 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     try {
         const plantsRef = collection(db, PLANTS_COLLECTION);
         const usersRef = collection(db, USERS_COLLECTION);
-        const plantCacheRef = collection(db, PLANT_CACHE_COLLECTION);
+        const plantCacheRef = collection(
+            db,
+            PLANT_CACHE_COLLECTION
+        );
 
         const [
-            totalPlantsSnapshot,
             verifiedPlantsSnapshot,
             unverifiedPlantsSnapshot,
             totalUsersSnapshot,
         ] = await Promise.all([
-            // Total plants (all documents in the 'plants' collection)
             getCountFromServer(plantsRef),
-
-            // Verified plants
-            getCountFromServer(plantsRef),
-
-            // Unverified plants
             getCountFromServer(plantCacheRef),
-
-            // Total users
             getCountFromServer(usersRef),
         ]);
 
+        const verifiedPlants =
+            verifiedPlantsSnapshot.data().count;
+
+        const unverifiedPlants =
+            unverifiedPlantsSnapshot.data().count;
+
         return {
-            totalPlants: totalPlantsSnapshot.data().count,
-            verifiedPlants:
-                verifiedPlantsSnapshot.data().count,
-            unverifiedPlants:
-                unverifiedPlantsSnapshot.data().count,
-            totalUsers: totalUsersSnapshot.data().count,
+            totalPlants:
+                verifiedPlants + unverifiedPlants,
+
+            verifiedPlants,
+            unverifiedPlants,
+
+            totalUsers:
+                totalUsersSnapshot.data().count,
         };
     } catch (error) {
         console.error(

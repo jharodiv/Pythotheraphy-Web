@@ -55,7 +55,6 @@ export default function Plants() {
         updateEditField,
 
         saveEdit,
-        removePlant,
         handleRemovePlantClick
     } = usePlants();
 
