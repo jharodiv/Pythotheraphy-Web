@@ -3,7 +3,6 @@ import { useCategories } from "@hooks/dashboard/useCategories/useCategories";
 import CategoryPlantsModal from "@components/dashboard/categories/plantModal";
 import CreateCategoryModal from "@components/dashboard/categories/createCategoryModal";
 import EditCategoryModal from "@components/dashboard/categories/editCategoryModal";
-
 import {
     FolderTree,
     MoreVertical,
@@ -32,6 +31,7 @@ export default function Categories() {
         isUpdating,
         updateCategory,
         openEditCategoryModal,
+        handleDeleteCategoryClick,
 
 
         search,
@@ -258,28 +258,20 @@ export default function Categories() {
                                                     Edit
                                                 </button>
 
-
                                                 {/* Delete */}
-
                                                 <button
-
                                                     onClick={(event) => {
-
                                                         event.stopPropagation();
 
                                                         setOpenMenu(null);
 
-                                                        // Delete logic
-
+                                                        handleDeleteCategoryClick(category);
                                                     }}
-
                                                     className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-600 transition hover:bg-red-50"
                                                 >
-
                                                     <Trash2 className="h-4 w-4" />
 
                                                     Delete
-
                                                 </button>
 
 

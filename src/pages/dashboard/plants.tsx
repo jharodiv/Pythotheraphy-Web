@@ -56,6 +56,7 @@ export default function Plants() {
 
         saveEdit,
         removePlant,
+        handleRemovePlantClick
     } = usePlants();
 
     const filterLabel = {
@@ -278,9 +279,7 @@ export default function Plants() {
                                                     ) => {
                                                         event.stopPropagation();
 
-                                                        removePlant(
-                                                            plant.id
-                                                        );
+                                                        handleRemovePlantClick(plant);
                                                     }}
                                                     className="flex h-full w-20 cursor-pointer items-center justify-center gap-1.5 bg-[#c65353] text-white transition hover:bg-[#b74747]"
                                                 >

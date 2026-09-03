@@ -22,6 +22,8 @@ import type {
     UsePlantsReturn,
 } from "@type/dashboard/plant.types";
 
+import { useConfirmation } from "@hooks/globalized/useConfirmation";
+
 export function usePlants(): UsePlantsReturn {
 
     // Data State
@@ -88,6 +90,8 @@ export function usePlants(): UsePlantsReturn {
     });
 
     const [createModalOpen, setCreateModalOpen] = useState(false);
+
+    const { openConfirmation } = useConfirmation();
 
     // Fetch Plants
 
@@ -358,6 +362,17 @@ export function usePlants(): UsePlantsReturn {
         },
         []
     );
+
+    const handleRemovePlantClick = (plant: PlantModel) => {
+        openConfirmation({
+            title: "Delete Plant?",
+            description: "Are you sure you want to delete this plant?",
+            confirmText: "Delete",
+            cancelText: "Cancel",
+            onConfirm: () => removePlant(plant.id)
+        });
+    }
+
 
     // Open Edit Modal
 
@@ -676,6 +691,7 @@ export function usePlants(): UsePlantsReturn {
 
         editPlant,
         removePlant,
+        handleRemovePlantClick,
 
         // Row UI
         activePlant,

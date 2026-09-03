@@ -7,6 +7,7 @@ export interface UseCategoriesReturn {
     loading: boolean;
     isCreating: boolean;
     isUpdating: boolean;
+    isDeleting: boolean;
     error: string | null;
     search: string;
     categoriesCount: CategoryCount[];
@@ -42,6 +43,8 @@ export interface UseCategoriesReturn {
     setIsCategoryPlantsModalOpen: (isCategoryPlantsModalOpen: boolean) => void;
     createNewCategory: (label: string) => Promise<void>;
     updateCategory: (id: string, label: string) => Promise<void>;
+    handleDeleteCategoryClick: (category: CategoryModel) => void;
+    deleteCategory: (id: string) => Promise<void>;
 }
 
 export interface CategoryPlantsModalProps {

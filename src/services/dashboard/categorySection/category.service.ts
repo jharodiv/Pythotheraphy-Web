@@ -7,6 +7,8 @@ import {
     Timestamp,
     doc,
     updateDoc,
+    deleteDoc,
+    getDoc
 } from "firebase/firestore";
 
 import type { CategoryModel, CategoryCount } from "@model/dashboard/categories.model";
@@ -175,6 +177,35 @@ export async function updatePlantCategory(id: string, label: string): Promise<vo
 
         throw new Error(
             "Unable to update category"
+        );
+    }
+}
+
+export async function deletePlantCategory(id: string): Promise<void> {
+    try {
+
+        const categoryRef = doc(db, "categories", id);
+
+        const snapshot = await getDoc(categoryRef)
+
+        if (snapshot.exists()) {
+            await deleteDoc(categoryRef);
+
+            return;
+        }
+
+
+        throw new Error(
+            "Category does not exist"
+        )
+    } catch (error) {
+        console.error(
+            "Failed to delete category",
+            error
+        )
+
+        throw new Error(
+            "Unable to delete category"
         );
     }
 }

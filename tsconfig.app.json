@@ -58,6 +58,9 @@
       ],
       "@type/*": [
         "./src/types/*"
+      ],
+      "@context/*": [
+        "./src/context/*"
       ]
     }
   },

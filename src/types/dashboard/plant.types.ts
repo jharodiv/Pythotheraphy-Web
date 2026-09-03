@@ -46,6 +46,10 @@ export interface UsePlantsReturn {
         plant: Omit<PlantModel, "id">
     ) => Promise<PlantModel>;
 
+    handleRemovePlantClick: (
+        plant: PlantModel
+    ) => void;
+
     openCreateModal: () => void;
     closeCreateModal: () => void;
     updateCreateField: (

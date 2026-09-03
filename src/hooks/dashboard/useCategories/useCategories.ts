@@ -1,6 +1,7 @@
+import { useConfirmation } from "@hooks/globalized/useConfirmation";
 import type { CategoryModel, CategoryCount } from "@model/dashboard/categories.model";
 import type { PlantModel } from "@model/dashboard/plants.model";
-import { getCategories, getCategoryPlantCounts, getCategoriesPlantsById, createPlantCategory, updatePlantCategory } from "@service/dashboard/categorySection/category.service";
+import { getCategories, getCategoryPlantCounts, getCategoriesPlantsById, createPlantCategory, updatePlantCategory, deletePlantCategory } from "@service/dashboard/categorySection/category.service";
 import type { UseCategoriesReturn } from "@type/dashboard/categoties.type";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -9,6 +10,7 @@ export function useCategories(): UseCategoriesReturn {
     const [loading, setLoading] = useState(false);
     const [isCreating, setIsCreating] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
     const [error, setError] = useState(null);
     const [search, setSearch] = useState("");
     const [isCategoryPlantsModalOpen, setIsCategoryPlantsModalOpen] = useState(false);
@@ -19,6 +21,8 @@ export function useCategories(): UseCategoriesReturn {
     const [categoriesCount, setCategoriesCount] = useState<CategoryCount[]>([]);
     const [getCategoryPlantCountsById, setCategoryPlantCountsById] = useState<PlantModel[]>([]);
     const [selectedCategoryPlants, setSelectedCategoryPlants] = useState<PlantModel[]>([]);
+
+    const { openConfirmation } = useConfirmation();
 
     const openNewCategoryModal = useCallback(() => {
         setIsNewCategoryModalOpen(true);
@@ -180,12 +184,48 @@ export function useCategories(): UseCategoriesReturn {
             }
         }, [fetchCategories, closeNewCategoryModal])
 
+
+    const deleteCategory = useCallback(
+        async (id: string): Promise<void> => {
+            try {
+                setIsDeleting(true);
+                setError(null);
+
+                await deletePlantCategory(id);
+
+                setCategories(current =>
+                    current.filter(category => category.id !== id)
+                );
+
+            } catch (error) {
+                console.error(
+                    "Failed to delete the category",
+                    error
+                );
+
+                setError(error instanceof Error ? error.message : "Unable to delete the category");
+
+                throw error;
+            } finally {
+                setIsDeleting(false);
+            }
+
+        }, []
+    )
+
+    const handleDeleteCategoryClick = (category: CategoryModel) => {
+        openConfirmation({
+            title: "Delete Category?",
+            description: `Are you sure you want to delete ${category.label}?`,
+            confirmText: "Delete Category",
+            onConfirm: () => deleteCategory(category.id)
+        })
+    }
+
     useEffect(() => {
         fetchCategories();
         fetchCategoriesCount();
     }, [fetchCategories, fetchCategoriesCount]);
-
-
 
     return {
         categories,
@@ -201,6 +241,7 @@ export function useCategories(): UseCategoriesReturn {
         loading,
         isCreating,
         isUpdating,
+        isDeleting,
         error,
         search,
 
@@ -231,6 +272,8 @@ export function useCategories(): UseCategoriesReturn {
         closeNewCategoryModal,
         openEditCategoryModal,
         closeEditCategoryModal,
+        handleDeleteCategoryClick,
+        deleteCategory,
         isNewCategoryModalOpen,
     };
 }
